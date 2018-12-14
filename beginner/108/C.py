@@ -1,0 +1,1 @@
+/home/ochir/regular/102/C.py

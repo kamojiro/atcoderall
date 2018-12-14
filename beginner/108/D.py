@@ -1,0 +1,1 @@
+/home/ochir/regular/102/D2.py
