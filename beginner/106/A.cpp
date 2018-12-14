@@ -1,6 +1,8 @@
-#include <cstdio>
-
-int main(){
-  int n, m, scanf("%d%d", &n, &m);
-  printf("%d\n", n * m - n - m + 1);
+#include<iostream>
+using namespace std;
+long long a,b;
+int main()
+{
+  cin >> a >> b;
+  cout << (a - 1) * (b - 1) << endl;
 }

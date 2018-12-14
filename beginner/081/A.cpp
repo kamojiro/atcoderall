@@ -6,11 +6,15 @@
 using namespace std;
 int main()
 {
-  int ans;
-  int d[3];
-  scanf("%d%d%d", &d[0], &d[1], &d[2]);
-  sort(d,d+3);
-  ans = d[2]*10+d[0]+d[1];
+  char S[3];
+  int ans = 0;
+  int i;
+  scanf("%s", S);
+  for (i = 0; i<3; ++i) {
+    if (S[i] == '1') {
+      ans++;
+        };
+  }
   cout << ans << "\n";
   return 0;
 }

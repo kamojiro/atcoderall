@@ -4,13 +4,11 @@
 #include <string>
 #include <algorithm>
 using namespace std;
+
 int main()
 {
-  int ans;
-  int d[3];
-  scanf("%d%d%d", &d[0], &d[1], &d[2]);
-  sort(d,d+3);
-  ans = d[2]*10+d[0]+d[1];
-  cout << ans << "\n";
+  int X,Y;
+  cin >> X >> Y;
+  cout << X + Y/2 << "\n";
   return 0;
 }
