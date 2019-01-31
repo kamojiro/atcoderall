@@ -1,25 +1,10 @@
-N = int( input())
-W = [ int( input()) for _ in range(N) ]
-D = [ 0 for _ in range(N)]
-for i in range(N):
-    dan = W[i]
-    cnt = -1
-    difw = 10**5
-    Flag = False
-    for j in range(N):
-        if D[j] == 0 and Flag == False:
-            cnt = j
+N, M = map( int, input().split())
+ans = "-1 -1 -1"
+for i in range(M//3+1):
+    if (M-i*3)%2 == 0 and M >= i*3:
+        y = (M-i*3)//2 - (N-i)
+        x = (N-i) - y
+        if x >= 0 and y >= 0:
+            ans = str(x) + " " + str(i) + " " + str(y)
             break
-        elif D[j] >= dan:
-            Flag = True
-            if difw > D[j] - dan:
-                difw = D[j] - dan
-                cnt = j
-    D[cnt] = dan
-ans = 0
-for i in range(N):
-    if D[i] == 0:
-        break
-    else:
-        ans += 1
-print(ans)
+print( ans)
