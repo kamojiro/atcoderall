@@ -13,20 +13,26 @@ int main()
   int N, M, x, y, s, z;
   cin >> N >> M;
   vector<int> E[N];
-  int V[N] = {1};
+  int V[N];
+  for (int i = 0; i < N; ++i) {
+    V[i] = 1;
+  }
+
   for (int i = 0; i < M; ++i) {
     cin >> x >> y;
     x--; y--;
-    cout << y << "\n";
     V[y] = 0;
     E[x].push_back(y);
   }
   vector<int> S;
-  int Pathdistance[N] = {-1};
+  int Pathdistance[N];
+  for (int i = 0; i < N; ++i) {
+    Pathdistance[i] = -1;
+  }
+
   for (int i = 0; i < N; ++i) {
     if (V[i] == 1) {
       S.push_back(i);
-      cout << i << "\n";
     }
   }
   while (S.size()) {
@@ -44,14 +50,15 @@ int main()
     while (Z.size()) {
       vector<int> T(0,0);
       now++;
-      for (unsigned int i = 0; i < Z.size(); ++i) {
+      int t = Z.size();
+      for (unsigned int i = 0; i < t; ++i) {
         z = Z.back();
-        cout << z << "\n";
         Z.pop_back();
+        int s = E[z].size();
         for (unsigned int j = 0; j < E[z].size(); ++j) {
-          if (Pathdistance[E[z][i]] < now) {
-            T.push_back(E[z][i]);
-            Pathdistance[E[z][i]] = now;
+          if (Pathdistance[E[z][j]] < now) {
+            T.push_back(E[z][j]);
+            Pathdistance[E[z][j]] = now;
           }
         }
       }
