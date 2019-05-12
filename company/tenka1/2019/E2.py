@@ -9,23 +9,24 @@ def factors(z):
         ret.append(z)
     return ret
 
-def eratosththenes(N):
+def eratosthenes(N):
     if N == 0:
-        return [0]
+        return []
+    from collections import deque
     work = [True] * (N+1)
     work[0] = False
     work[1] = False
+    ret = []
     for i in range(N+1):
         if work[i]:
+            ret.append(i)
             for j in range(2* i, N+1, i):
                 work[j] = False
-    return work
-
+    return ret
 
 N = int( input())
 A = [ int( input()) for _ in range(N+1)]
-E = eratosththenes(N)
-Primes = [ i for i in range(N+1) if E[i] == 1]
+Primes = eratosthenes(N)
 ANS = []
 F = factors( abs(A[0]))
 for f in F:
@@ -51,4 +52,3 @@ for p in Primes:
             ANS.append(p)
 for ans in ANS:
     print(ans)
-    
