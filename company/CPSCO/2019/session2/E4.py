@@ -9,7 +9,7 @@ for i in range(1,N):
     E[i].append(p)
     H[i] = h
 d = deque()
-V = [ [0] for _ in range(N)]
+V = [ deque() for _ in range(N)]
 for i in range(N):
     if not E[i] == 0:
         d.append(i)
@@ -37,14 +37,4 @@ while d:
                 h = 10**10
             q.append(t)
         p = deque([10**10]*(len(q)+len(V[v])))
-        for i in len(q):
-            for j in len(V[v]):
-                if p[i+j] > q[i] + V[v][j]:
-                    p[i+j] = q[i] + V[v][j]
-
-                    
-
-
-
-
-
+        for 
