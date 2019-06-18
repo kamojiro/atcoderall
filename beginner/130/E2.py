@@ -1,5 +1,5 @@
-import sys
-input = sys.stdin.readline
+# import sys
+# input = sys.stdin.readline
 def main():
     Q = 10**9+7
     N, M = map( int, input().split())
