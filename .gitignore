@@ -1,1 +1,4 @@
 ./pages/
+Cargo.lock
+Cargo.toml
+teaget
