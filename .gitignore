@@ -1,5 +1,5 @@
 ./pages/
 Cargo.lock
 Cargo.toml
-taget/
+*target/
 
