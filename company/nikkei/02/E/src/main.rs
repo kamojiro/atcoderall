@@ -2,8 +2,15 @@
 fn main() {
     let s = std::io::stdin();
     let mut sc = Scanner { stdin: s.lock() };
-    let t:usize = sc.read();
-    println!("{}", (t-1)/2);
+    let N:usize = sc.read();
+    let K:usize = sc.read();
+    if (2*K*N + (2*N - 1)*N) <= (K*N+N*(5*N-7)/2){
+        println!("-1");
+        return
+    }
+    for i in 0..N{
+        println!("{} {} {}",K+i, 2*N, K*2*N+i );
+    }
 }
 
 pub struct Scanner<R> {
