@@ -3,46 +3,49 @@ fn main() {
     let s = std::io::stdin();
     let mut sc = Scanner { stdin: s.lock() };
     let N:usize = sc.read();
-    let S:Vec< Vec< char>> = (0..N).map(|_| sc.chars()).collect();
-    let mut V: Vec< Vec< usize>> = vec![ vec![0;N];N];
-    let mut ans:usize = 0;
-
+    let K:usize = sc.read();
+    let H: Vec<usize> = sc.vec(N);
+    let mut h:usize = 0;
+    let mut cnt:usize = 0;
+    let mut A:Vec<usize> = vec![];
+    let mut B:Vec<usize> = vec![];
     for i in 0..N{
-        for j in (0..N).rev(){
-            if (S[i][j] == '.') && (V[i][j] == 0){
-                break
-            }
-            V[i][j] = 2;
+        if h <= H[i]{
+            cnt += 1;
+        }else{
+            cnt = 0
         }
-        let mut m:usize = 0;
-        let mut used = false;
-        for j in 0..N{
-            if V[i][j] == 0{
-                used = true;
-            }
-        }
-        if used{
-            ans += 1
-        }
-        for j in 0..N{
-            if used{
-                V[i+m][j] = 1;
-            }
-            if (j < N-1) && (m == 0){
-                if V[i][j+1] == 2{
-                    if i < N-1{
-                        m = 1;
-                        V[i+1][j] = 1;
-                    }
-                }
-            }
-        }
-        if (i < N-1) && used{
-                V[i+1][N-1] = 1;
-        }
-
+        h = H[i];
+        A.push(cnt);
     }
-    println!("{}", ans);
+    h = 1000_000_000;
+    for i in (0..N).rev(){
+        if h >= H[i]{
+            cnt += 1;
+        }else{
+            cnt = 0
+        }
+        h = H[i];
+        B.push(cnt);
+    }
+    for i in 0..(N-1){
+        if A[i] > A[i+1]{
+            A[i+1] = A[i];
+        }
+        if B[i] > B[i+1]{
+            B[i+1] = B[i];
+        }
+    }
+    let mut ans: usize = A[N-1];
+    if ans < B[N-1]{
+        ans = B[N-1];
+    }
+    for i in 0..(N-1){
+        if ans < A[i] + B[N-2-i]{
+            ans = A[i] + B[N-2-i]
+        }
+    }
+
 }
 
 pub struct Scanner<R> {
