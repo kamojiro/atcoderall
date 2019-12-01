@@ -1,32 +1,20 @@
 #![allow(non_snake_case)]
-use std::collections::HashMap;
 fn main() {
     let s = std::io::stdin();
     let mut sc = Scanner { stdin: s.lock() };
-    let N:usize = sc.read();
-    let K:usize = sc.read();
-    let A:Vec<usize> = sc.vec(N);
-    let mut ans:usize = 0;
-    let mut Acc:Vec<usize> = vec![0;N+1];
-    Acc.push(0);
-    for i in 0..N{
-        Acc[i+1] = (Acc[i]+A[i]-1)%K
+    let X:usize = sc.read();
+    let t = X/100;
+    let Y = X - X/100*100;
+    let mut s:usize = 0;
+    if Y%5 != 0{
+        s = 1;
     }
-    let mut S = HashMap::new();
-    for i in 0..(N+1){
-        *S.entry(Acc[i]).or_insert(0) += 1;
 
-        if K <= i{
-            *S.entry(Acc[i-K]).or_insert(0) -= 1;
-        }
-        ans += S[&Acc[i]]-1;
+    if Y/5 + s<= t{
+        println!("1");
+    }else{
+        println!("0");
     }
-    
-    
-    
-    println!("{}", ans);
-
-
 
 }
 

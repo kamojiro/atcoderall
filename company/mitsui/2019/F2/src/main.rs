@@ -1,33 +1,43 @@
 #![allow(non_snake_case)]
-use std::collections::HashMap;
 fn main() {
     let s = std::io::stdin();
     let mut sc = Scanner { stdin: s.lock() };
-    let N:usize = sc.read();
-    let K:usize = sc.read();
-    let A:Vec<usize> = sc.vec(N);
-    let mut ans:usize = 0;
-    let mut Acc:Vec<usize> = vec![0;N+1];
-    Acc.push(0);
-    for i in 0..N{
-        Acc[i+1] = (Acc[i]+A[i]-1)%K
+    let T1:i64 = sc.read();
+    let T2:i64 = sc.read();
+    let A1:i64 = sc.read();
+    let A2:i64 = sc.read();
+    let B1:i64 = sc.read();
+    let B2:i64 = sc.read();
+    if T1*A1 + T2*A2 == T1*B1 + T2*B2 {
+        println!("infinity");
+        return
     }
-    let mut S = HashMap::new();
-    for i in 0..(N+1){
-        *S.entry(Acc[i]).or_insert(0) += 1;
-
-        if K <= i{
-            *S.entry(Acc[i-K]).or_insert(0) -= 1;
-        }
-        ans += S[&Acc[i]]-1;
+    let mut F = A1 - B1;
+    let mut S = A2 - B2;
+    if (F > 0) && ( S > 00){
+        println!("0");
+        return
+    }
+    if ( F < 0) && (S < 0){
+        println!("0");
+        return
+    }
+    if F < 0{
+        F = -F;
+        S = -S;
+    }
+    if F*T1 + S*T2 > 0{
+        println!("0");
+        return
+    }
+    let M = F*T1;
+    let m = -(F*T1+S*T2);
+    if M%m > 0{
+        println!("{}", M/m*2+1);
+    }else{
+        println!("{}", M/m*2);
     }
     
-    
-    
-    println!("{}", ans);
-
-
-
 }
 
 pub struct Scanner<R> {
@@ -57,5 +67,6 @@ impl<R: std::io::Read> Scanner<R> {
         self.read::<String>().chars().collect()
     }
 }
+
 
 

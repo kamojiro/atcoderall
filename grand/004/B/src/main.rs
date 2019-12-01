@@ -1,32 +1,34 @@
 #![allow(non_snake_case)]
-use std::collections::HashMap;
 fn main() {
     let s = std::io::stdin();
     let mut sc = Scanner { stdin: s.lock() };
     let N:usize = sc.read();
-    let K:usize = sc.read();
-    let A:Vec<usize> = sc.vec(N);
-    let mut ans:usize = 0;
-    let mut Acc:Vec<usize> = vec![0;N+1];
-    Acc.push(0);
+    let x:usize = sc.read();
+    let mut A:Vec<(usize, usize)> = vec![];
+    let V:Vec<usize> = sc.vec(N);
     for i in 0..N{
-        Acc[i+1] = (Acc[i]+A[i]-1)%K
+        A.push((V[i], i));
     }
-    let mut S = HashMap::new();
-    for i in 0..(N+1){
-        *S.entry(Acc[i]).or_insert(0) += 1;
-
-        if K <= i{
-            *S.entry(Acc[i-K]).or_insert(0) -= 1;
+    
+    for _ in 0..N{
+        for i in 0..N{
+            let next = (i+1)%N;
+            if A[next].0 > A[i].0 + x{
+                A[next] = (A[i].0 + x, A[i].1);
+            }
         }
-        ans += S[&Acc[i]]-1;
     }
-    
-    
-    
+    let mut ans:usize = 0;
+    for i in 0..N{
+        if ans < (A[i].0 - V[A[i].1])/x{
+            ans = (A[i].0 - A[i].1)/x;
+        }
+    }
+    ans *= x;
+    for i in 0..N{
+        ans += V[A[i].1]
+    }
     println!("{}", ans);
-
-
 
 }
 

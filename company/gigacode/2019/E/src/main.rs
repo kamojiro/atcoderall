@@ -2,13 +2,13 @@
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, Eq)]
 struct State {
     cost: f64,
     position: usize,
 }
 
-impl Eq for State{
+impl PartialEq for State{
     fn 
 }
 
