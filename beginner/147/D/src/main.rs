@@ -2,7 +2,7 @@
 fn main() {
     let s = std::io::stdin();
     let mut sc = Scanner { stdin: s.lock() };
-    
+
 }
 
 pub struct Scanner<R> {
