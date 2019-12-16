@@ -43,6 +43,7 @@ fn main() {
     }
     println!("{}", ans.trim());
     //trimが合ってもなくても通る。時間も変わらない。
+    
 }
 
 pub struct Scanner<R> {
