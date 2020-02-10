@@ -27,15 +27,12 @@ def getFactorial(N):
 
 def main():
     r1, c1, r2, c2 = map( int, input().split())
-    F = getFactorial(2*10**6)
-    I = getFactorialInv(10**6)
-    ans = 0
-    for i in range(c1, c2+1):
-        ans += F[i+r2+1]*I[i+1]%Q*I[r2]%Q-1
-#        print(i+1, r2,F[i+r2+1]*I[i]%Q*I[r2+1]%Q-1)
-        if r1 > 1:
-            ans -= F[i+r1]*I[i]%Q*I[r1]%Q-1
-        ans %= Q
-    print( ans)
+    F = getFactorial(2*10**6+2)
+    I = getFactorialInv(10**6+1)
+
+    def G(a, b):
+        return F[a+b+2]*I[a+1]%Q*I[b+1]%Q
+    
+    print( ( G(r2,c2) - G(r2, c1-1) - G(r1-1, c2) + G(r1-1, c1-1))%Q)
 if __name__ == '__main__':
     main()
