@@ -26,17 +26,17 @@ def subtrees(N, E, v):
                 ret_second.append((e,t))
     return list(ret_first) + list(ret_second)
 
-def get_number_of_vertex_with_subtrees(E, subtrees):
-    # E: edges
-    # subtrees: directed edges adopted to tree dp
-    from collections import defaultdict
-    d = defaultdict( lambda: 1)
-    for s, t in subtrees:
-        for v in E[t]:
-            if v == s:
-                continue
-            d[(s,t)] += d[(t,v)]
-    return d
+# def get_number_of_vertex_with_subtrees(E, subtrees):
+#     # E: edges
+#     # subtrees: directed edges adopted to tree dp
+#     from collections import defaultdict
+#     d = defaultdict( lambda: 1)
+#     for s, t in subtrees:
+#         for v in E[t]:
+#             if v == s:
+#                 continue
+#             d[(s,t)] += d[(t,v)]
+#     return d
 
 def getInv(N):
     inv = [0] * (N + 1)
@@ -63,7 +63,8 @@ def main():
         E[a].append(b)
         E[b].append(a)
     subtree = subtrees(N,E,0)
-    num_subtree = get_number_of_vertex_with_subtrees(E, subtree)
+    # num_subtree = get_number_of_vertex_with_subtrees(E, subtree)
+    num_subtree = defaultdict( lambda: 1)
     F, G = factorials(N)
     d = defaultdict( int)
     for s, t in subtree:
@@ -72,6 +73,7 @@ def main():
         for v in E[t]:
             if v == s:
                 continue
+            num_subtree[(s,t)] += num_subtree[(t,v)]
             count += num_subtree[(t,v)]
             z *= G[num_subtree[(t,v)]]
             z %= Q
