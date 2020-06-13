@@ -3,4 +3,5 @@ Cargo.lock
 Cargo.toml
 *target/
 *testcase/
+*/url.txt
 
