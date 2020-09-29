@@ -5,5 +5,5 @@ fn main() {
         //N: i64,
         //array: [(usize,usize);N],
     }
-    unimplemented!();
+    
 }
