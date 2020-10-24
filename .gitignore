@@ -1,6 +1,7 @@
 ./pages/
 Cargo.lock
 Cargo.toml
+rust-toolchain
 *target/
 *testcase/
 */url.txt
