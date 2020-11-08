@@ -52,18 +52,18 @@ fn read_input() -> Input {
     let mut Direction: Vec<usize> = Vec::new();
     for (ry, rx, c) in RC {
         Robot.push((ry, rx));
-        if c == "U".to_string(){
+        if c == "U".to_string() {
             Direction.push(0);
-        }else if c == "D".to_string() {
+        } else if c == "D".to_string() {
             Direction.push(1);
-        }else if c == "L".to_string(){
+        } else if c == "L".to_string() {
             Direction.push(2);
-        }else{
+        } else {
             Direction.push(3);
         }
     }
-    let mut Board: Vec<Vec<bool>> = vec![vec![true;N];N];
-    for (by,bx) in Block{
+    let mut Board: Vec<Vec<bool>> = vec![vec![true; N]; N];
+    for (by, bx) in Block {
         Board[by][bx] = false;
     }
     Input {
@@ -77,71 +77,83 @@ fn read_input() -> Input {
     }
 }
 
-fn one_move(input: &Input,board: &mut Vec<Vec<usize>>, ry:usize, rx:usize, c:usize) -> bool{
-    let directions:Vec<(usize,usize)> = vec![(input.N-1,0),(1,0),(0,input.N-1),(0,1)];
-    let mut d: VecDeque<(usize,usize,usize)> = VecDeque::new();
+fn one_move(input: &Input, board: &mut Vec<Vec<usize>>, ry: usize, rx: usize, c: usize) -> bool {
+    let directions: Vec<(usize, usize)> = vec![(input.N - 1, 0), (1, 0), (0, input.N - 1), (0, 1)];
+    let mut d: VecDeque<(usize, usize, usize)> = VecDeque::new();
     let N = input.N;
-    let mut before: Vec<Vec<(usize,usize)>> = vec![vec![(N,N);N];N];
-    let mut visited: Vec<Vec<bool>> = vec![vec![false;N];N];
-    d.push_back((ry,rx,c));
+    let mut before: Vec<Vec<(usize, usize)>> = vec![vec![(N, N); N]; N];
+    let mut visited: Vec<Vec<bool>> = vec![vec![false; N]; N];
+    d.push_back((ry, rx, c));
     visited[ry][rx] = true;
-    while let Some((y,x,t)) = d.pop_back(){
+    while let Some((y, x, t)) = d.pop_back() {
         // if visited[y][x]{
         //     continue
         // }
         // visited[y][x] = true;
-        if y == input.Goal.0 && x == input.Goal.1{
-            break
+        if y == input.Goal.0 && x == input.Goal.1 {
+            break;
         }
-        for i in 0..4{
-            let (dy,dx) = directions[i];
-            let ay = (y+dy)%N;
-            let ax = (x+dx)%N;
-            if !input.Board[ay][ax]{
-                continue
+        for i in 0..4 {
+            let (dy, dx) = directions[i];
+            let ay = (y + dy) % N;
+            let ax = (x + dx) % N;
+            if !input.Board[ay][ax] {
+                continue;
             }
-            if visited[ay][ax]{
-                continue
+            if visited[ay][ax] {
+                continue;
             }
             visited[ay][ax] = true;
-            before[ay][ax] = (y,x);
-            if t == i{
-                d.push_front((ay,ax,i));
-            }else{
-                d.push_back((ay,ax,i));
+            before[ay][ax] = (y, x);
+            if t == i {
+                d.push_front((ay, ax, i));
+            } else {
+                d.push_back((ay, ax, i));
             }
-            
         }
     }
-    if !visited[input.Goal.0][input.Goal.1]{
+    if !visited[input.Goal.0][input.Goal.1] {
         return false;
     }
     // restore the pathway
-    let mut route: VecDeque<(usize,usize)> = VecDeque::new();
+    let mut route: VecDeque<(usize, usize)> = VecDeque::new();
     let mut y = input.Goal.0;
     let mut x = input.Goal.1;
     while before[y][x].0 != N {
-        route.push_front((y,x));
-        let (py,px) = before[y][x];
+        route.push_front((y, x));
+        let (py, px) = before[y][x];
         y = py;
         x = px;
     }
+
     let mut y = ry;
     let mut x = rx;
     let mut t = c;
+    let mut by = ry;
+    let mut bx = rx;
 
-    'routing: for (py,px) in route{
+    for (py, px) in route {
         // eprintln!("{} {}",py, px );
+        if board[y][x] < 4 {
+            if t ^ 1 == board[y][x] {
+                board[by][bx] = t ^ 1;
+            }
+            // if (t == 0 && board[y][x] == 1) || (t == 1 && board[y][x] == 0){
+            //     board[by][bx] = board[y];
+            // }else if (t == 2 && board[y][x] == 3) || (t == 3 && board[y][x] == 2){
+            //     board[by][bx] = board[y][x]^1;
+            // }
+            break;
+        }
 
-        for i in 0..4{
-            let (dy,dx) = directions[i];
-            if (y+dy)%N == py && (x+dx)%N == px{
-                if t != i{
-                    if board[y][x] < 4{
-                        break 'routing;
-                    }
+        for i in 0..4 {
+            let (dy, dx) = directions[i];
+            if (y + dy) % N == py && (x + dx) % N == px {
+                if t != i {
                     board[y][x] = i;
                     t = i;
+                    by = y;
+                    bx = x;
                     break;
                 }
             }
@@ -152,27 +164,52 @@ fn one_move(input: &Input,board: &mut Vec<Vec<usize>>, ry:usize, rx:usize, c:usi
     true
 }
 
-
-fn get_output_from_board(input: &Input, board: &Vec<Vec<usize>>) -> Vec<(usize,usize,usize)>{
-    let mut ret: Vec<(usize,usize,usize)> = Vec::new();
-    for i in 0..input.N{
-        for j in 0..input.N{
-            if board[i][j] < 4{
-                ret.push((i,j,board[i][j]));
+fn get_output_from_board(input: &Input, board: &Vec<Vec<usize>>) -> Vec<(usize, usize, usize)> {
+    let mut ret: Vec<(usize, usize, usize)> = Vec::new();
+    for i in 0..input.N {
+        for j in 0..input.N {
+            if board[i][j] < 4 {
+                ret.push((i, j, board[i][j]));
             }
         }
     }
-    
+
     ret
 }
 
-fn solve(input: &Input) -> Vec<(usize,usize,usize)> {
-    let mut board: Vec<Vec<usize>> = vec![vec![4;input.N];input.N];
-    for i in 0..input.M{
-    // for i in 0..1{
-        let (ry,rx) = input.Robot[i];
+fn compute_score(input: &Input, board: &Vec<Vec<usize>>) {
+    let directions: Vec<(usize, usize)> = vec![(input.N - 1, 0), (1, 0), (0, input.N - 1), (0, 1)];
+    let N = input.N;
+    let M = input.M;
+    let mut visited: Vec<Vec<bool>> = vec![vec![false; N]; N];
+    let mut visited_mass: Vec<(usize,usize)> = Vec::new();
+    for i in 0..M {
+        let (mut y, mut x) = input.Robot[i];
+        let mut t = input.Direction[i];
+        while y != input.Goal.0 && x != input.Goal.1{
+            if visited[y][x]{
+                break
+            }
+            visited_mass.push((y,x));
+            // visited[y][x] = true;
+            if board[y][x] < 4{
+                t = board[y][x];
+            }
+            let (dy, dx) = directions[t];
+            y = (y+dy)%N;
+            x = (x+dx)%N;
+        }
+        
+    }
+}
+
+fn solve(input: &Input) -> Vec<(usize, usize, usize)> {
+    let mut board: Vec<Vec<usize>> = vec![vec![4; input.N]; input.N];
+    for i in 0..input.M {
+        // for i in 0..1{
+        let (ry, rx) = input.Robot[i];
         let c = input.Direction[i];
-        one_move(&input,&mut board, ry, rx, c);
+        one_move(&input, &mut board, ry, rx, c);
         // board[ry][rx] = 0;
     }
     get_output_from_board(&input, &board)
@@ -185,8 +222,8 @@ fn run() {
     let input = read_input();
     let out = solve(&input);
     println!("{}", out.len());
-    let Direction = ["U","D","L","R"];
-    for (y,x,r) in out {
+    let Direction = ["U", "D", "L", "R"];
+    for (y, x, r) in out {
         println!("{} {} {}", y, x, Direction[r]);
     }
 }
