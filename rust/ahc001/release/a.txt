@@ -1,0 +1,3 @@
+   Compiling chokudai005 v0.1.0 (/home/ochir/competitive_programming/atcoder/rust/ahc001/release)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.41s
+     Running `/home/ochir/competitive_programming/atcoder/rust/target/debug/a`
