@@ -3,6 +3,7 @@
 ## Dijkstra
 
 - [abc192_e](https://atcoder.jp/contests/abc192/submissions/20316664)
+- [typical90_013]
 
 ## CRT
 
@@ -28,3 +29,20 @@
 ## dfs
 
 - [typical90_003]
+
+## ModInt
+
+- [arc115_d](https://atcoder.jp/contests/arc115/submissions/21492649)
+- [abc190_e](https://atcoder.jp/contests/abc190/submissions/20417897)
+
+## lower_bound
+
+- [typical90_009]
+
+## Argument sort
+
+- [typical90_009]
+
+## f64 sort
+
+- [typical90_009]
