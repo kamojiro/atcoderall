@@ -30,6 +30,10 @@
 
 - [typical90_003]
 
+## bit search
+
+- [abc200_d](https://atcoder.jp/contests/abc200/submissions/22441762)
+
 ## ModInt
 
 - [arc115_d](https://atcoder.jp/contests/arc115/submissions/21492649)
@@ -46,3 +50,12 @@
 ## f64 sort
 
 - [typical90_009]
+
+## print vectore
+
+- [abc200_d](https://atcoder.jp/contests/abc200/submissions/22441762)
+
+## Segment Tree
+
+- [abc186_f](https://atcoder.jp/contests/abc186/submissions/20684886)
+- [typical90_017]

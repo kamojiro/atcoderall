@@ -20,64 +20,10 @@ use proconio::{fastout, input};
 #[fastout]
 fn main() {
     input!{
-        N: usize,
-        K: usize,
+        //N: i64,
+        //array: [(usize,usize);N],
     }
-    let mut dp = vec![vec![0; N*3+1]; 4];
-    for j in 1..=N{
-        dp[1][j] = 1;
-    }
-
-    for i in 2..=3{
-        let mut s = 0;
-        for j in (i..=i*N).rev(){
-            if j >= N{
-                s += dp[i-1][j-N];
-            }
-            s -= dp[i-1][j];
-            dp[i][j] = s;
-        }
-    }
-    // for &l in &dp{
-    //     debug_eprintln!("{:?}", l);
-    // }
-    let mut acc = 0;
-    let mut abc = 0;
-    for i in 0..dp[3].len(){
-        acc += dp[3][i];
-        if K <= acc{
-            abc = i;
-            acc -= dp[3][i];
-            break
-        }
-    }
-    let mut a = 0;
-    for i in 1..=N{
-        if (2+i > abc) || (abc > N*2+i){
-            continue;
-        }
-        acc += dp[2][abc-i];
-        // println!("{}", acc);
-        if K <= acc{
-            a = i;
-            acc -= dp[2][abc-i];
-            break;
-        }
-    }
-    let bc = abc - a;
-    let mut b = 0;
-    for i in 1..=N{
-        if (1+i > bc) || (bc > N+i){
-            continue;
-        }
-        acc += 1;
-        if acc == K{
-            b = i;
-            break;
-        }
-    }
-    println!("{} {} {}",a, b,abc-a-b);
-    
+    unimplemented!();
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

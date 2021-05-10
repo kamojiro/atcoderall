@@ -24,106 +24,39 @@ fn main() {
         A: [usize; N],
         //array: [(usize,usize);N],
     }
-    let mut mods = vec![-1; 200];
-    for i in 0..N{
-        if mods[A[i]%200 as usize] >= 0{
+    let mut mods:Vec<Vec<usize>> = vec![vec![];200];
+    let p = 8.min(A.len());
+    for h in 0..(1<<p){
+        let mut sum = 0;
+        let mut candidate = vec![];
+        for i in 0..p{
+            if h >> i & 1 == 1{
+                sum += A[i];
+                sum %= 200;
+                candidate.push(i);
+            }
+        }
+        if mods[sum].len() > 0{
             println!("Yes");
-            println!("1 {}", mods[A[i]%200 as usize]+1);
-            println!("1 {}", i+1);
+            println!("{} {}",
+                     mods[sum].len(),
+                     mods[sum].iter()
+                     .map(|i| (i+1).to_string())
+                     .collect::<Vec<_>>()
+                     .join(" ")
+            );
+            println!("{} {}",
+                     candidate.len(),
+                     candidate.iter()
+                     .map(|i| (i+1).to_string())
+                     .collect::<Vec<_>>()
+                     .join(" ")
+            );            
             return;
         }
-        if A[i]%200 == 0{
-            println!("Yes");
-            println!("1 {}", i+1);
-            println!("2 {} {}", i+1, i^1+1);
-
-        }
-        mods[A[i]%200 as usize] = i as i64;
-    }
-    // debug_eprintln!("{:?}", mods);
-    let mut dp: Vec<Vec<Vec<usize>>> = vec![vec![vec![]; 200]; N+1];
-    for i in 0..N{
-        let a = A[i]%200;
-        for j in 0..200{
-            if dp[i][j].len() == 1{
-                let c = dp[i].get(j).unwrap().clone();
-                dp[i+1][j] = c;
-            }
-        }
-
-        if dp[i][a].len() == 1{
-            println!("Yes");
-            println!("1 {}", i+1);
-            for k in 0..dp[i][a].len(){
-                print!("{} ", dp[i][a][k]+1);
-            }
-        }else{
-            dp[i+1][a] = vec![i];
-        }
-        
-        for j in 1..200{
-            if dp[i][j].len() > 0{
-                if dp[i+1][(j+a)%200].len() == 1{
-                    // debug_eprintln!("{} {} {} {:?}",i, j ,a, dp[i+1][(j+a)%200]);
-                    dp[i][j].push(i);
-                    println!("Yes");
-                    print!("{} ", dp[i][j].len());
-                    for k in 0..dp[i][j].len(){
-                        print!("{} ", dp[i][j][k]+1);
-                    }
-                    // for t in dp[i][j][0]{
-                    //     print!("{} ", t);
-                    // }
-                    println!();
-                    print!("{} ", dp[i][(j+a)%200].len());
-                    for k in 0..dp[i][(j+a)%200].len(){
-                        print!("{} ", dp[i][(j+a)%200][k]+1);
-                    }
-                    println!();
-                    return;
-                }
-                let mut c = dp[i].get(j).unwrap().clone();
-                c.push(i);
-                dp[i+1][(j+a)%200] = c;
-            }
-        }
-        // debug_eprintln!("{:?}", dp[i]);
+        mods[sum] = candidate;
     }
     println!("No");
-    // for i in 0..N{
-    //     let a = A[i];
-    //     for j in 0..200{
-    //         if dp[i][j].len() == 2{
-    //             let &c = dp[i][j].get(0).unwrap();
-    //             dp[i+1][j].push(c);
-    //             let &d = dp[i][j].get(1).unwrap();
-    //             dp[i+1][j].push(d);
-    //         }else if dp[i][j].len() == 2{
-    //             let &c = dp[i][j].get(0).unwrap();
-    //             dp[i+1][j].push(c);
-    //         }
-    //     }
-    //     for j in 0..200{
-    //         if dp[i+1][(j+a)&200].len() > 2{
-    //             continue
-    //         }
-    //         if dp[i][j].len() > 0{
-    //             dp[i+1][(j+a)&200].push(j);
-    //         }
-    //     }
-    // }
-    // let mut g = 300;
-    // for j in 0..200{
-    //     if dp[N][j].len() >= 2{
-    //         g = j;
-    //         break;
-    //     }
-    // }
-    // if g == 300{
-    //     println!("No");
-    //     return;
-    // }
-    
     
     
 }
