@@ -20,26 +20,10 @@ use proconio::{fastout, input};
 #[fastout]
 fn main() {
     input!{
-        N: usize,
-        P: [usize; N],
+        //N: i64,
+        //array: [(usize,usize);N],
     }
-    let mut dp = vec![false; 10000+1];
-    dp[0] = true;
-    for &p in &P{
-        for i in (p..=10000).rev(){
-            if dp[i-p]{
-                dp[i] = dp[i-p]
-            }
-        }
-        // println!("{}", (0..10).map(|x| dp[x].to_string()).collect::<Vec<_>>().join(" "));
-    }
-    let mut ans = 0;
-    for t in dp{
-        if t{
-            ans += 1;
-        }
-    }
-    println!("{}", ans);
+    unimplemented!();
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
