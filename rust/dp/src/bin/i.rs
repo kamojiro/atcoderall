@@ -3,15 +3,15 @@
 
 #[cfg(debug_assertions)]
 #[allow(unused)]
-macro_rules! debug_eprintln {
+macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {
-        eprintln!($p, $($x,)*);
+        std::eprintln!($p, $($x,)*);
     };
 }
- 
+
 #[cfg(not(debug_assertions))]
 #[allow(unused)]
-macro_rules! debug_eprintln {
+macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
@@ -20,13 +20,28 @@ use proconio::{fastout, input};
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
-        //array: [(usize,usize);N],
+        N: usize,
+        P: [f64; N],
     }
-    unimplemented!();
+    let mut dp = vec![vec![0.0; N+1];N+1];
+    dp[0][0] = 1.0;
+    for i in 0..N{
+        let p = P[i];
+        for j in 0..=(i+1){
+            if j == 0{
+                dp[i+1][0] = dp[i][0]*(1.0-p);
+            }else{
+                dp[i+1][j] = dp[i][j-1]*p + dp[i][j]*(1.0-p);
+            }
+        }
+        // eprintln!("{}", dp[i+1].iter().fold(0.0, |sum, i| sum + i));
+    }
+    let mut ans = 0.0;
+    for j in (N+1)/2..=N{
+        ans += dp[N][j];
+    }
+    println!("{}", ans);
 }
-
-// https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
 
 #[allow(unused)]
 mod static_prime_modint {
@@ -38,7 +53,7 @@ mod static_prime_modint {
         const ZETA: T;
         const MAX_NN_INDEX: usize;
     }
- 
+
     #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
     pub struct Mod10();
     impl StaticModulus<usize> for Mod10 {
@@ -51,7 +66,20 @@ mod static_prime_modint {
             1_000_000_007
         }
     }
- 
+
+    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+    pub struct Mod10_2();
+    impl StaticModulus<usize> for Mod10_2 {
+        fn singleton() -> Self {
+            Mod10_2()
+        }
+    }
+    impl Modulus<usize> for Mod10_2 {
+        fn modulus(&self) -> usize {
+            1_000_308_737
+        }
+    }
+
     #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
     pub struct Mod9();
     impl NttFriendlyModulus<usize> for Mod9 {
@@ -68,7 +96,7 @@ mod static_prime_modint {
             998_244_353
         }
     }
- 
+
     #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
     pub struct Mod9_2();
     impl NttFriendlyModulus<usize> for Mod9_2 {
@@ -82,10 +110,10 @@ mod static_prime_modint {
     }
     impl Modulus<usize> for Mod9_2 {
         fn modulus(&self) -> usize {
-            998_244_353
+            985_661_441
         }
     }
- 
+
     #[derive(Clone, Debug)]
     pub struct CombinatoricsTable<M>
     where
@@ -102,10 +130,17 @@ mod static_prime_modint {
     {
         pub fn new(src_max: usize, dist_max: usize) -> Self {
             let mut factorial_table = vec![ModInt::new(1)];
+            let mut inv_table = vec![ModInt::new(1)];
             let mut factorial_inv_table = vec![ModInt::new(1)];
+            let m = M::singleton().modulus();
             for i in 1..=dist_max {
                 factorial_table.push(ModInt::new(i) * factorial_table[i - 1]);
-                factorial_inv_table.push(factorial_table[i].inverse());
+                if i == 1 {
+                    inv_table.push(ModInt::new(1));
+                } else {
+                    inv_table.push(inv_table[m % i] * (m - m / i));
+                }
+                factorial_inv_table.push(inv_table[i] * factorial_inv_table[i - 1]);
             }
             let mut stirling_second_table: Vec<Vec<_>> = Vec::with_capacity(src_max + 1);
             for n in 0..=src_max {
@@ -169,7 +204,7 @@ mod static_prime_modint {
             }
         }
     }
- 
+
     // Number-theoretic transformation
     // The length of f must be a power of 2
     // and zeta must be a primitive f.len()-th root of unity
@@ -213,7 +248,7 @@ mod static_prime_modint {
             }
         }
     }
- 
+
     // convolution function
     pub fn convolution<M>(aa: &[ModInt<usize, M>], bb: &[ModInt<usize, M>]) -> Vec<ModInt<usize, M>>
     where
@@ -258,7 +293,7 @@ mod static_prime_modint {
         return c;
     }
 }
- 
+
 #[allow(unused)]
 mod dynamic_modint {
     use crate::gcd;
@@ -294,7 +329,7 @@ mod dynamic_modint {
             return (gm, zm);
         }
     }
- 
+
     // Two-term Chinese remainder theorem function
     pub fn crt<T>(
         am: ModInt<T, ModDyn<T>>,
@@ -324,7 +359,7 @@ mod dynamic_modint {
             return crt_internal(a, b, m, mm, d, x);
         }
     }
- 
+
     // Two-slice Chinese remainder theorem function
     // It assumes all the moduli are equal for each slice
     pub fn crt_slice<T>(
@@ -369,7 +404,7 @@ mod dynamic_modint {
         }
         return result;
     }
- 
+
     fn crt_internal<T>(a: T, b: T, m: T, mm: T, d: T, x: T) -> Option<ModInt<T, ModDyn<T>>>
     where
         T: PrimInt + Unsigned + NumAssignOps,
@@ -397,7 +432,7 @@ mod dynamic_modint {
             return Some(ans);
         }
     }
- 
+
     // Helper function for number-theoretic transformation
     // lists Proth primes of the form
     // p = k * 2^n + 1
@@ -434,7 +469,7 @@ mod dynamic_modint {
             }
         }
     }
- 
+
     pub fn check_powers(a: usize, p: usize, n: usize) {
         let mut aa = ModInt::new_with(a as u128, p as u128);
         for i in 0..n {
@@ -442,7 +477,7 @@ mod dynamic_modint {
             aa = aa * aa;
         }
     }
- 
+
     // Calculate the smallest primitive root mod p
     // and the corresponding discrete logarithm table
     // The argument p must be a prime
@@ -474,19 +509,19 @@ mod dynamic_modint {
         panic!();
     }
 }
- 
+
 #[allow(unused)]
 mod modint {
     pub use num_traits::{NumAssignOps, PrimInt, Unsigned};
     use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Sub, SubAssign};
- 
+
     pub trait Modulus<T>: Copy + Eq
     where
         T: NumAssignOps + PrimInt + Unsigned,
     {
         fn modulus(&self) -> T;
     }
- 
+
     #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
     pub struct ModDyn<T>(T);
     impl<T> Modulus<T> for ModDyn<T>
@@ -497,8 +532,8 @@ mod modint {
             self.0
         }
     }
- 
-    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+
+    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct ModInt<T, M>(T, M)
     where
         M: Modulus<T>,
@@ -551,6 +586,27 @@ mod modint {
             }
         }
     }
+
+    impl<T, M> std::fmt::Display for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
+    impl<T, M> std::fmt::Debug for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
     impl<M> ModInt<usize, M>
     where
         M: StaticModulus<usize>,
@@ -559,7 +615,7 @@ mod modint {
             self.pow(self.1.modulus() - 2)
         }
     }
- 
+
     impl<T, M> AddAssign<T> for ModInt<T, M>
     where
         M: Modulus<T>,
@@ -645,7 +701,7 @@ mod modint {
     impl_op_from_opassign!(Sub, sub, sub_assign, Self);
     impl_op_from_opassign!(Mul, mul, mul_assign, Self);
 }
- 
+
 // Binary search for closures
 // returns the value i where f(i) == true but f(i+1) == false
 // if forall i f(i) == true, returns max_value
@@ -672,7 +728,7 @@ where
     }
     return min_value;
 }
- 
+
 // Iterator of proper subsets
 // Caution: it does NOT starts with the universal set itself!
 struct SubsetIterator {
@@ -700,13 +756,13 @@ impl Iterator for SubsetIterator {
         }
     }
 }
- 
+
 #[derive(Debug, Clone)]
 struct EquivalenceRelation {
     parent: Vec<std::cell::Cell<usize>>,
     size: Vec<usize>,
 }
- 
+
 #[allow(dead_code)]
 impl EquivalenceRelation {
     fn new(n: usize) -> Self {
@@ -717,7 +773,7 @@ impl EquivalenceRelation {
         let size = vec![1; n];
         return Self { parent, size };
     }
- 
+
     fn make_equivalent(&mut self, a: usize, b: usize) {
         let volume = self.parent.len();
         if a >= volume || b >= volume {
@@ -741,7 +797,7 @@ impl EquivalenceRelation {
             self.size[bb] = aasize + bbsize;
         }
     }
- 
+
     fn find(&self, a: usize) -> usize {
         let volume = self.parent.len();
         if a >= volume {
@@ -756,16 +812,16 @@ impl EquivalenceRelation {
             return c;
         }
     }
- 
+
     fn are_equivalent(&self, a: usize, b: usize) -> bool {
         return self.find(a) == self.find(b);
     }
- 
+
     fn size(&self, a: usize) -> usize {
         self.size[self.find(a)]
     }
 }
- 
+
 // Segment tree for range minimum query and alike problems
 // The closures must fulfill the defining laws of monoids
 // Indexing is 0-based
@@ -776,7 +832,7 @@ struct SegmentTree<A, CUnit, CMult> {
     monoid_unit_closure: CUnit,
     monoid_op_closure: CMult,
 }
- 
+
 #[allow(dead_code)]
 impl<A, CUnit, CMult> SegmentTree<A, CUnit, CMult>
 where
@@ -796,7 +852,7 @@ where
         };
         return this;
     }
- 
+
     fn from_slice(sl: &[A], monoid_unit_closure: CUnit, monoid_op_closure: CMult) -> Self {
         let n = sl.len();
         let mut nn = 1;
@@ -818,7 +874,7 @@ where
             monoid_op_closure,
         }
     }
- 
+
     fn update(&mut self, k: usize, a: A) {
         let n = (self.data.len() + 1) / 2;
         let mut k = k + n - 1;
@@ -828,7 +884,7 @@ where
             self.data[k] = (self.monoid_op_closure)(self.data[k * 2 + 1], self.data[k * 2 + 2]);
         }
     }
- 
+
     fn query_internal(&self, a: usize, b: usize, k: usize, l: usize, r: usize) -> A {
         if r <= a || b <= l {
             return (self.monoid_unit_closure)();
@@ -842,14 +898,14 @@ where
         }
     }
 }
- 
+
 trait RangeQuery<T> {
     type Output;
     fn query(&self, r: T) -> Self::Output;
 }
- 
+
 use std::ops::Range;
- 
+
 #[allow(dead_code)]
 impl<A, CUnit, CMult> RangeQuery<Range<usize>> for SegmentTree<A, CUnit, CMult>
 where
@@ -863,7 +919,7 @@ where
         return self.query_internal(range.start, range.end, 0, 0, n);
     }
 }
- 
+
 #[allow(dead_code)]
 fn divisors(n: u64) -> Vec<u64> {
     let mut divisors = Vec::new();
@@ -881,7 +937,7 @@ fn divisors(n: u64) -> Vec<u64> {
     }
     return divisors;
 }
- 
+
 use num_traits::PrimInt;
 #[allow(dead_code)]
 fn gcd<T>(a: T, b: T) -> T
@@ -896,7 +952,7 @@ where
         return gcd(b, a % b);
     }
 }
- 
+
 use num_traits::Unsigned;
 // Sum of floor((ai+b)/m) for i = 0..=n-1
 // based on the (new) editorial of practice2-c

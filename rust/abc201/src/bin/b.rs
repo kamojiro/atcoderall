@@ -3,38 +3,34 @@
 
 #[cfg(debug_assertions)]
 #[allow(unused)]
-macro_rules! debug_eprintln {
+macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {
-        eprintln!($p, $($x,)*);
+        std::eprintln!($p, $($x,)*);
     };
 }
- 
+
 #[cfg(not(debug_assertions))]
 #[allow(unused)]
-macro_rules! debug_eprintln {
+macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
 use proconio::{fastout, input};
+// use proconio::marker::Bytes;
 
 #[fastout]
 fn main() {
     input!{
         N: usize,
-        H: [i64; N],
-        //array: [(usize,usize);N],
+        mut ST: [(String, usize); N],
     }
-    let mut dp = vec![std::i64::MAX; N];
-    dp[0] = 0;
+    let mut g = Vec::new();
     for i in 0..N{
-        if i < N-1{
-            dp[i+1] = dp[i+1].min(dp[i] + (H[i] - H[i+1]).abs())
-        }
-        if i < N-2{
-            dp[i+2] = dp[i+2].min(dp[i] + (H[i] - H[i+2]).abs())
-        }
+        g.push((ST[i].1, i))
     }
-    println!("{}", dp[N-1]);
+    g.sort();
+    let k = g[N-2].1;
+    println!("{}", ST[k].0);
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
@@ -509,7 +505,7 @@ mod modint {
         }
     }
  
-    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct ModInt<T, M>(T, M)
     where
         M: Modulus<T>,
@@ -562,6 +558,27 @@ mod modint {
             }
         }
     }
+
+    impl<T, M> std::fmt::Display for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
+    impl<T, M> std::fmt::Debug for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
     impl<M> ModInt<usize, M>
     where
         M: StaticModulus<usize>,

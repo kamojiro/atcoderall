@@ -3,39 +3,106 @@
 
 #[cfg(debug_assertions)]
 #[allow(unused)]
-macro_rules! debug_eprintln {
+macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {
-        eprintln!($p, $($x,)*);
+        std::eprintln!($p, $($x,)*);
     };
 }
- 
+
 #[cfg(not(debug_assertions))]
 #[allow(unused)]
-macro_rules! debug_eprintln {
+macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
 use proconio::{fastout, input};
+use static_prime_modint::*;
+// use proconio::marker::Bytes;
 
 #[fastout]
 fn main() {
     input!{
         N: usize,
-        H: [i64; N],
+        UVW: [(usize, usize, u64); N-1],
+        //N: i64,
         //array: [(usize,usize);N],
     }
-    let mut dp = vec![std::i64::MAX; N];
-    dp[0] = 0;
-    for i in 0..N{
-        if i < N-1{
-            dp[i+1] = dp[i+1].min(dp[i] + (H[i] - H[i+1]).abs())
-        }
-        if i < N-2{
-            dp[i+2] = dp[i+2].min(dp[i] + (H[i] - H[i+2]).abs())
+    // let mut root = vec![0; N];
+    let mut edges = vec![Vec::new(); N];
+    let mut weighted_edges = vec![Vec::new(); N];
+    for (u,v,w) in UVW{
+        edges[u-1].push(v-1);
+        edges[v-1].push(u-1);
+        weighted_edges[u-1].push((v-1,w));
+        weighted_edges[v-1].push((u-1,w));
+    }
+    let mut order = Vec::new();
+    let mut visited = vec![false; N];
+    way_back_dfs(&edges, 0, &mut visited, &mut order);
+    let mut visited = vec![false; N];
+    let mut weighted_root = vec![(0,0);N];
+    for &v in &order{
+        if v == 0{continue}
+        visited[v] = true;
+        for &(u, w) in &weighted_edges[v]{
+            if visited[u]{continue}
+            // eprintln!("{} {} {:?}", v, u, visited[u]);
+            weighted_root[v] = (u, w)
         }
     }
-    println!("{}", dp[N-1]);
+    // eprintln!("{:?}", weighted_root);
+    // eprintln!("{:?}", order);
+    let mut ans = ModInt::<_, Mod10>::new(0);
+    let mut pow = ModInt::new(1);
+    for i in 0..60{
+        let mut binary_ans = 0;
+        let t = (1 as u64)<<i;
+        let mut vertex = vec![vec![1, 0]; N];
+        for &u in &order{
+            if u == 0{continue}
+            let a = vertex[weighted_root[u].0][0];
+            let b = vertex[weighted_root[u].0][1];
+            let mut c = vertex[u][0];
+            let mut d = vertex[u][1];
+            let w = weighted_root[u].1;
+            if w & t > 0{
+                let ff = c;
+                c = d;
+                d = ff;
+                // eprintln!("aaaaaaaaaa {} {} {}", w, t, w^t);
+            }
+            // let aa = a*c + b*d;
+            // let dd = a*d + b*c;
+            binary_ans += a*d + b*c;
+            // eprintln!("{} {} {} {} {}",u, a, b,c,d);
+            // eprintln!("{} {} {}",i, aa, dd);
+            vertex[weighted_root[u].0][0] += c;
+            vertex[weighted_root[u].0][1] += d;
+            // if i == 1{
+            //     eprintln!("{:?}", vertex);
+            //     eprintln!("{} {}",i, binary_ans);
+            // }
+        }
+        // if (1 <= i) && (i <= 1){
+        //     eprintln!("{} {}",i, binary_ans);
+        // }
+        // eprintln!("{} {:?}",i, vertex);
+        ans += pow*ModInt::new(binary_ans);
+        pow *= ModInt::new(2);
+    }
+    println!("{}", ans);
 }
+
+fn way_back_dfs(edges: &Vec<Vec<usize>>, start: usize, visited: &mut Vec<bool>, order: &mut Vec<usize>){
+    visited[start] = true;
+    for &w in &edges[start]{
+        if !visited[w]{
+            way_back_dfs(edges, w, visited, order);
+        }
+    }
+    order.push(start);
+}
+
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
 
@@ -509,7 +576,7 @@ mod modint {
         }
     }
  
-    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct ModInt<T, M>(T, M)
     where
         M: Modulus<T>,
@@ -562,6 +629,27 @@ mod modint {
             }
         }
     }
+
+    impl<T, M> std::fmt::Display for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
+    impl<T, M> std::fmt::Debug for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
     impl<M> ModInt<usize, M>
     where
         M: StaticModulus<usize>,

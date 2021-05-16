@@ -20,10 +20,35 @@ use proconio::{fastout, input};
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
-        //array: [(usize,usize);N],
+        N: usize,
+        K: usize,
+        A: [usize; N],
     }
-    unimplemented!();
+    let mut dp = vec![0;K+1];
+    // 0 = First
+    // 1 = Second
+    let m = *A.iter().min().unwrap() as usize;
+    for k in 0..m.min(K+1){
+        dp[k] = 1;
+    }
+    for k in m..=K{
+        let mut winner = 1;
+        for &a in &A{
+            if a <= k{
+                if dp[k-a] == 1{
+                    winner = 0;
+                    break;
+                }
+            }
+        }
+        dp[k] = winner;
+    }
+    if dp[K] == 0{
+        println!("First");
+    }else{
+        println!("Second")
+    }
+
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

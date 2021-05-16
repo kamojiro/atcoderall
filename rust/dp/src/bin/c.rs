@@ -16,14 +16,22 @@ macro_rules! debug_eprintln {
 }
 
 use proconio::{fastout, input};
+use std::cmp::max;
 
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
-        //array: [(usize,usize);N],
+        N: usize,
+        ABC: [(usize, usize, usize); N],
     }
-    unimplemented!();
+    let mut dp = vec![vec![0;3]; N+1];
+    for i in 0..N{
+        let &(a, b, c) = &ABC[i];
+        dp[i+1][0] = max(dp[i][1]+a,dp[i][2]+a);
+        dp[i+1][1] = max(dp[i][0]+b,dp[i][2]+b);
+        dp[i+1][2] = max(dp[i][0]+c,dp[i][1]+c);
+    }
+    println!("{}", *dp[N].iter().max().unwrap());
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

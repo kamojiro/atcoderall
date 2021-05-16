@@ -3,38 +3,89 @@
 
 #[cfg(debug_assertions)]
 #[allow(unused)]
-macro_rules! debug_eprintln {
+macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {
-        eprintln!($p, $($x,)*);
+        std::eprintln!($p, $($x,)*);
     };
 }
- 
+
 #[cfg(not(debug_assertions))]
 #[allow(unused)]
-macro_rules! debug_eprintln {
+macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
-use proconio::{fastout, input};
+use proconio::{fastout, input, marker::Chars};
 
 #[fastout]
 fn main() {
     input!{
-        N: usize,
-        H: [i64; N],
-        //array: [(usize,usize);N],
+        H: usize,
+        W: usize,
     }
-    let mut dp = vec![std::i64::MAX; N];
-    dp[0] = 0;
-    for i in 0..N{
-        if i < N-1{
-            dp[i+1] = dp[i+1].min(dp[i] + (H[i] - H[i+1]).abs())
+    let mut A = Vec::new();
+    for _ in 0..H{
+        input!{
+            a: Chars,
         }
-        if i < N-2{
-            dp[i+2] = dp[i+2].min(dp[i] + (H[i] - H[i+2]).abs())
+        A.push(a);
+    }
+    let mut memo: Vec<Vec<i64>> = vec![vec![0; W];H];
+    let mut checked = vec![vec![false; W];H];
+    let ans = f(H,W,0,0,&A,&mut memo, &mut checked);
+    // eprintln!("{:?}", memo);
+    if ans > 0{
+        println!("Takahashi");
+    }else if ans == 0{
+        println!("Draw");
+    }else{
+        println!("Aoki");
+    }
+}
+
+fn f(H:usize, W: usize, h: usize, w: usize, A: &Vec<Vec<char>>, memo: &mut Vec<Vec<i64>>, checked: &mut Vec<Vec<bool>>) -> i64{
+    if (h == H-1) && ( w == W-1){
+        return 0
+    }
+    if checked[h][w]{return memo[h][w]}
+    checked[h][w] = true;
+    // eprintln!("{} {} {:?}",h, w ,memo);
+    let mut ret = 0;
+    if (h+w)%2== 0{
+        ret = std::i64::MIN;
+        if h < H-1{
+            if A[h+1][w].to_string() == "+".to_string(){
+                ret = ret.max(f(H,W,h+1,w,A,memo,checked)+1);
+            }else{
+                ret = ret.max(f(H,W,h+1,w,A,memo,checked)-1);
+            }
+        }
+        if w < W-1{
+            if A[h][w+1].to_string() == "+".to_string(){
+                ret = ret.max(f(H,W,h,w+1,A,memo,checked)+1);
+            }else{
+                ret = ret.max(f(H,W,h,w+1,A,memo,checked)-1);
+            }
+        }
+    }else{
+        ret = std::i64::MAX;
+        if h < H-1{
+            if A[h+1][w].to_string() == "+".to_string(){
+                ret = ret.min(f(H,W,h+1,w,A,memo,checked)-1);
+            }else{
+                ret = ret.min(f(H,W,h+1,w,A,memo,checked)+1);
+            }
+        }
+        if w < W-1{
+            if A[h][w+1].to_string() == "+".to_string(){
+                ret = ret.min(f(H,W,h,w+1,A,memo,checked)-1);
+            }else{
+                ret = ret.min(f(H,W,h,w+1,A,memo,checked)+1);
+            }
         }
     }
-    println!("{}", dp[N-1]);
+    memo[h][w] = ret;
+    ret
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
@@ -509,7 +560,7 @@ mod modint {
         }
     }
  
-    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct ModInt<T, M>(T, M)
     where
         M: Modulus<T>,
@@ -562,6 +613,27 @@ mod modint {
             }
         }
     }
+
+    impl<T, M> std::fmt::Display for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
+    impl<T, M> std::fmt::Debug for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
     impl<M> ModInt<usize, M>
     where
         M: StaticModulus<usize>,

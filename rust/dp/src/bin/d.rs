@@ -20,11 +20,23 @@ use proconio::{fastout, input};
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
-        //array: [(usize,usize);N],
+        N: usize,
+        W: usize,
+        WV: [(usize, usize); N],
     }
-    unimplemented!();
+    let mut dp = vec![vec![0; W+1];N+1];
+    for i in 0..N{
+        let &(w,v) = &WV[i];
+        for j in 0..w{
+            dp[i+1][j] = dp[i][j];
+        }
+        for j in w..=W{
+            dp[i+1][j] = dp[i][j].max(dp[i][j-w] + v);
+        }
+    }
+    println!("{}", dp[N].iter().max().unwrap());
 }
+
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
 

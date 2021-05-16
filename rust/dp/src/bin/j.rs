@@ -20,10 +20,39 @@ use proconio::{fastout, input};
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
+        N: usize,
+        A: [usize; N],
         //array: [(usize,usize);N],
     }
-    unimplemented!();
+    let mut dishes: Vec<usize> = vec![0; 4];
+    for a in A{
+        dishes[a] += 1;
+    }
+    let mut checked = vec![vec![vec![false;N+1]; N+1]; N+1];
+    checked[0][0][0] = true;
+    let mut dp = vec![vec![vec![0.0;N+1]; N+1]; N+1];
+    println!("{}", f(N, dishes[1], dishes[2], dishes[3], &mut checked, &mut dp));
+        
+}
+
+fn f(N: usize, a: usize, b: usize, c: usize, checked: &mut  Vec<Vec<Vec<bool>>>, dp: &mut Vec<Vec<Vec<f64>>>) -> f64{
+    if checked[a][b][c]{
+        return dp[a][b][c]
+    }
+    checked[a][b][c] = true;
+    let mut ret = 1.0;
+    if a > 0{
+        ret += f(N, a-1, b, c, checked, dp)*(a as f64)/(N as f64);
+    }
+    if b > 0{
+        ret += f(N, a+1, b-1, c, checked, dp)*(b as f64)/(N as f64);
+    }
+    if c > 0{
+        ret += f(N, a, b+1, c-1, checked, dp)*(c as f64)/(N as f64);
+    }
+    ret *= (N as f64)/((a + b + c) as f64);
+    dp[a][b][c] = ret;
+    ret
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

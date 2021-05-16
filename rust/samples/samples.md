@@ -1,3 +1,4 @@
+
 # Rust samples
 
 ## Dijkstra
@@ -17,6 +18,7 @@
 
 - [abc188_f](https://atcoder.jp/contests/abc188/submissions/22114876)
 - [abc188_f](https://atcoder.jp/contests/abc188/submissions/20512402)
+- [dp_j](https://atcoder.jp/contests/dp/submissions/22558862)
 
 ## BTreeMap
 
@@ -24,11 +26,15 @@
 
 ## bfs
 
-- [typical90_003]
+- [typical90_003](https://atcoder.jp/contests/typical90/submissions/22319483)
 
 ## dfs
 
-- [typical90_003]
+- [typical90_003](https://atcoder.jp/contests/typical90/submissions/22319483)
+
+## 帰りがけdfs
+
+- [abc201_e](https://atcoder.jp/contests/abc201/submissions/22638193)
 
 ## bit search
 
@@ -36,20 +42,21 @@
 
 ## ModInt
 
+- [typical90_005](https://atcoder.jp/contests/typical90/submissions/22335098)
 - [arc115_d](https://atcoder.jp/contests/arc115/submissions/21492649)
 - [abc190_e](https://atcoder.jp/contests/abc190/submissions/20417897)
 
 ## lower_bound
 
-- [typical90_009]
+- [typical90_009](https://atcoder.jp/contests/typical90/submissions/22348600)
 
 ## Argument sort
 
-- [typical90_009]
+- [typical90_009](https://atcoder.jp/contests/typical90/submissions/22348600)
 
 ## f64 sort
 
-- [typical90_009]
+- [typical90_009](https://atcoder.jp/contests/typical90/submissions/22348600)
 
 ## print vectore
 
@@ -59,3 +66,20 @@
 
 - [abc186_f](https://atcoder.jp/contests/abc186/submissions/20684886)
 - [typical90_017]
+
+## LCS
+
+- [dp_f](https://atcoder.jp/contests/dp/submissions/22523166)
+
+## topoligical sort
+
+- ??[dp_g](https://atcoder.jp/contests/dp/submissions/22523617)
+
+
+## 木DP
+
+- [abc201_e](https://atcoder.jp/contests/abc201/submissions/22638193)
+
+## メモ化再帰
+
+- [abc201_d](https://atcoder.jp/contests/abc201/submissions/22617285)

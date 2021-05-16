@@ -20,10 +20,33 @@ use proconio::{fastout, input};
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
-        //array: [(usize,usize);N],
+        N: usize,
+        M: usize,
+        XY: [(usize, usize); M],
     }
-    unimplemented!();
+    let mut sink = vec![0;N+1];
+    let mut edge = vec![vec![]; N+1];
+    for &(x,y) in &XY{
+        edge[x].push(y);
+        sink[y] += 1;
+    }
+    let mut d = VecDeque::new();
+    for i in 1..=N{
+        if sink[i] == 0{
+            d.push_back(i);
+        }
+    }
+    let mut V = vec![0; N+1];
+    while let Some(x) = d.pop_front(){
+        for &y in &edge[x]{
+            V[y] = V[y].max(V[x]+1);
+            sink[y] -= 1;
+            if sink[y] == 0{
+                d.push_back(y);
+            }
+        }
+    }
+    println!("{}", V.iter().max().unwrap());
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
@@ -848,7 +871,7 @@ trait RangeQuery<T> {
     fn query(&self, r: T) -> Self::Output;
 }
  
-use std::ops::Range;
+use std::{collections::VecDeque, ops::Range};
  
 #[allow(dead_code)]
 impl<A, CUnit, CMult> RangeQuery<Range<usize>> for SegmentTree<A, CUnit, CMult>

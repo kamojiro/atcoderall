@@ -16,14 +16,37 @@ macro_rules! debug_eprintln {
 }
 
 use proconio::{fastout, input};
+use std::cmp::{max, min};
 
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
-        //array: [(usize,usize);N],
+        N: usize,
+        A: [i64; N],
     }
-    unimplemented!();
+    let mut memo: Vec<Vec<i64>> = vec![vec![0; N];N];
+    let ansx = f(N, 0, N-1,&A, &mut memo);
+    println!("{}", ansx*2 - A.iter().fold(0, |sum, i| sum+i));
+}
+
+fn f(N: usize, l: usize, r: usize,A: &Vec<i64>, memo: &mut Vec<Vec<i64>>) -> i64{
+    if l == r{
+        if N%2 == 0{
+            return 0
+        }else{
+            return A[l]
+        }
+    }
+    if memo[l][r] > 0{
+        return memo[l][r]
+    }
+    if (N - (r-l))%2 == 1{
+        // maximize
+        memo[l][r] = max(f(N, l+1, r, A, memo)+A[l], f(N, l, r-1, A, memo)+A[r]);
+    }else{
+        memo[l][r] = min(f(N, l+1, r, A, memo), f(N, l, r-1, A, memo));
+    }
+    memo[l][r]
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

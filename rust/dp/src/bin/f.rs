@@ -16,14 +16,48 @@ macro_rules! debug_eprintln {
 }
 
 use proconio::{fastout, input};
+use proconio::marker::Bytes;
 
 #[fastout]
 fn main() {
     input!{
+        S: Bytes,
+        T: Bytes,
         //N: i64,
         //array: [(usize,usize);N],
     }
-    unimplemented!();
+    let mut dp = vec![vec![0; T.len()+1]; S.len()+1];
+    for i in 0..S.len(){
+        for j in 0..T.len(){
+            if S[i] == T[j]{
+                dp[i+1][j+1] = dp[i][j]+1;
+            }else{
+                dp[i+1][j+1] = dp[i][j+1].max(dp[i+1][j]);
+            }
+        }
+    }
+    let mut x = S.len();
+    let mut y = T.len();
+    let mut ans = Vec::new();
+    let mut now = dp[S.len()][T.len()];
+    while (x > 0) && (y > 0){
+        if dp[x-1][y] == now{
+            x -= 1;
+            continue;
+        }else if dp[x][y-1] == now{
+            y -= 1;
+            continue;
+        }else if dp[x-1][y-1] == now{
+            x -= 1;
+            y -= 1;
+            continue;
+        }
+        x -= 1;
+        y -= 1;
+        now -= 1;
+        ans.push(S[x]);
+    }
+    println!("{}", ans.iter().rev().map(|&s| s as char).collect::<String>());
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

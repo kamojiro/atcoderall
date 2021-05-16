@@ -3,38 +3,77 @@
 
 #[cfg(debug_assertions)]
 #[allow(unused)]
-macro_rules! debug_eprintln {
+macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {
-        eprintln!($p, $($x,)*);
+        std::eprintln!($p, $($x,)*);
     };
 }
- 
+
 #[cfg(not(debug_assertions))]
 #[allow(unused)]
-macro_rules! debug_eprintln {
+macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
-use proconio::{fastout, input};
+use proconio::{fastout, input, marker::Chars};
+// use proconio::marker::Bytes;
 
 #[fastout]
 fn main() {
     input!{
-        N: usize,
-        H: [i64; N],
+        S: Chars,
+        //N: i64,
         //array: [(usize,usize);N],
     }
-    let mut dp = vec![std::i64::MAX; N];
-    dp[0] = 0;
-    for i in 0..N{
-        if i < N-1{
-            dp[i+1] = dp[i+1].min(dp[i] + (H[i] - H[i+1]).abs())
-        }
-        if i < N-2{
-            dp[i+2] = dp[i+2].min(dp[i] + (H[i] - H[i+2]).abs())
+    // 0 -> o, 1 -> x, 2 -> others
+    let mut nums = vec![2; 10];
+    for i in 0..10{
+        let s = S[i];
+        if s.to_string() == "o".to_string(){
+            nums[i] = 0;
+        }else if s.to_string() == "x".to_string(){
+            nums[i] = 1;
         }
     }
-    println!("{}", dp[N-1]);
+    let mut ans = 0;
+    for i in 0..10000{
+        let mut ok = true;
+        for j in 0..10{
+            if nums[j] == 2{continue;}
+            if nums[j] == 0{
+                let mut p = i;
+                let mut ochecked = false;
+                for _ in 0..4{
+                    if p%10 == j{
+                        ochecked = true;
+                        break
+                    }
+                    p /= 10;
+                }
+                if !ochecked{
+                    ok = false;
+                    break
+                }
+            }else if nums[j] == 1{
+                let mut p = i;
+                let mut xchecked = true;
+                for _ in 0..4{
+                    if p%10 == j{
+                        xchecked = false;
+                        break
+                    }
+                    p /= 10;
+                }
+                if !xchecked{
+                    ok = false;
+                    break
+                }
+                
+            }
+        }
+        if ok{ans += 1}
+    }
+    println!("{}", ans);
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
@@ -509,7 +548,7 @@ mod modint {
         }
     }
  
-    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct ModInt<T, M>(T, M)
     where
         M: Modulus<T>,
@@ -562,6 +601,27 @@ mod modint {
             }
         }
     }
+
+    impl<T, M> std::fmt::Display for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
+    impl<T, M> std::fmt::Debug for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
     impl<M> ModInt<usize, M>
     where
         M: StaticModulus<usize>,

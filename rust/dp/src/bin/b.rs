@@ -20,10 +20,20 @@ use proconio::{fastout, input};
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
+        N: usize,
+        K: usize,
+        H: [i64; N],
         //array: [(usize,usize);N],
     }
-    unimplemented!();
+    let mut dp = vec![std::i64::MAX; N];
+    dp[0] = 0;
+    for i in 0..N{
+        for k in 1..(K+1).min(N-i){
+            dp[i+k] = dp[i+k].min(dp[i] + (H[i] - H[i+k]).abs())
+        }
+    }
+    println!("{}", dp[N-1]);
+
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

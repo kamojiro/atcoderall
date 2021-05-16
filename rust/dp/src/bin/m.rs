@@ -16,14 +16,33 @@ macro_rules! debug_eprintln {
 }
 
 use proconio::{fastout, input};
+use static_prime_modint::*;
 
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
-        //array: [(usize,usize);N],
+        N: usize,
+        K: usize,
+        A: [usize; N],
     }
-    unimplemented!();
+    let mut dp = vec![vec![ModInt::<_, Mod10>::new(0);K+1];N+1];
+    dp[0][0] = ModInt::new(1);
+    for i in 0..N{
+        let mut acc = vec![ModInt::new(0)];
+        let a = A[i];
+        for j in 0..=K{
+            acc.push(acc[j]+dp[i][j]);
+        }
+        for j in 0..=K{
+            if j >= a{
+                dp[i+1][j] = acc[j+1] - acc[j-a];                
+            }else{
+                dp[i+1][j] = acc[j+1];
+            }
+        }
+    }
+    println!("{}", dp[N][K].value());
+        
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
@@ -498,7 +517,7 @@ mod modint {
         }
     }
  
-    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct ModInt<T, M>(T, M)
     where
         M: Modulus<T>,
@@ -551,6 +570,27 @@ mod modint {
             }
         }
     }
+
+    impl<T, M> std::fmt::Display for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
+    impl<T, M> std::fmt::Debug for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
     impl<M> ModInt<usize, M>
     where
         M: StaticModulus<usize>,

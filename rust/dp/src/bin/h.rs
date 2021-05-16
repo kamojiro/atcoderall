@@ -16,14 +16,32 @@ macro_rules! debug_eprintln {
 }
 
 use proconio::{fastout, input};
+use proconio::marker::Bytes;
+use static_prime_modint::*;
 
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
-        //array: [(usize,usize);N],
+        H: usize,
+        W: usize,
+        A: [Bytes; H],
     }
-    unimplemented!();
+    let mut dp = vec![vec![ModInt::<_, Mod10>::new(0);W];H];
+    for i in 0..H{
+        if A[i][0] == b"#"[0]{break}
+        dp[i][0] = ModInt::new(1);
+    }
+    for j in 0..W{
+        if A[0][j] == b"#"[0]{break}
+        dp[0][j] =  ModInt::new(1);
+    }
+    for i in 1..H{
+        for j in 1..W{
+            if A[i][j] == b"#"[0]{continue}
+            dp[i][j] = dp[i-1][j] + dp[i][j-1];
+        }
+    }
+    println!("{}", dp[H-1][W-1]);
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
@@ -478,7 +496,7 @@ mod dynamic_modint {
 #[allow(unused)]
 mod modint {
     pub use num_traits::{NumAssignOps, PrimInt, Unsigned};
-    use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Sub, SubAssign};
+    use std::{fmt::Debug, ops::{Add, AddAssign, Div, Mul, MulAssign, Sub, SubAssign}};
  
     pub trait Modulus<T>: Copy + Eq
     where
@@ -498,7 +516,7 @@ mod modint {
         }
     }
  
-    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct ModInt<T, M>(T, M)
     where
         M: Modulus<T>,
@@ -551,6 +569,28 @@ mod modint {
             }
         }
     }
+
+    impl<T, M> std::fmt::Display for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
+    impl<T, M> std::fmt::Debug for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
+    
     impl<M> ModInt<usize, M>
     where
         M: StaticModulus<usize>,
