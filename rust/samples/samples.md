@@ -83,3 +83,11 @@
 ## メモ化再帰
 
 - [abc201_d](https://atcoder.jp/contests/abc201/submissions/22617285)
+
+## 強連結成分分解
+
+- [typical90_021](https://atcoder.jp/contests/typical90/submissions/22658911)
+
+## GCD
+
+- [typical90_022](https://atcoder.jp/contests/typical90/submissions/22659082)
