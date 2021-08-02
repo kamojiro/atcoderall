@@ -1,5 +1,14 @@
 # Rust samples
 
+## default
+
+- [crate一覧](https://github.com/rust-lang-ja/atcoder-rust-resources/wiki/2020-Update)
+
+### crates
+
+- [superslice](https://docs.rs/superslice/1.0.0/x86_64-apple-darwin/superslice/trait.Ext.html)
+  - lower_bound, upper_bound
+
 ## shotest path
 
 ### Dijkstra
@@ -77,6 +86,10 @@
 
 - [typical90_065](https://atcoder.jp/contests/typical90/submissions/23848763)
 
+### divisors
+
+- [abc212_g](https://atcoder.jp/contests/abc212/submissions/24714938)
+
 ## 強連結成分分解
 
 - [typical90_021](https://atcoder.jp/contests/typical90/submissions/22658911)
@@ -147,11 +160,16 @@
 
 ## rust
 
-### lower_bound
+### binary search
+
+- [abc212_f](https://atcoder.jp/contests/abc212/submissions/24695483)
+
+#### lower_bound
 
 - [typical90_009](https://atcoder.jp/contests/typical90/submissions/23013185)
 - [typical90_051](https://atcoder.jp/contests/typical90/submissions/23535554)
   - a以下の個数
+
 
 ### Argument sort
 
@@ -201,7 +219,7 @@
 
 - [typical90_057](https://atcoder.jp/contests/typical90/submissions/23666997)
 
-### ダブリング
+### ダブリング/doubling
 
 - [typical90_058](https://atcoder.jp/contests/typical90/submissions/23667586)
 
