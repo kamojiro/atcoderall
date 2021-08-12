@@ -17,30 +17,27 @@ macro_rules! eprintln {
 
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
-use static_prime_modint::*;
+// use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        N: usize,
+        H: [usize; N],
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
-            }
+    let mut ans = 0;
+    let mut now = 1000_000_000_0;
+    let mut change = 0;
+    for &h in H.iter().rev(){
+        if now <= h{
+            change += 1;
+            ans = ans.max(change);
+        }else{
+            change = 0;
         }
+        now = h;
     }
-    println!("{}", dp[n][0][k])
+    println!("{}", ans);
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

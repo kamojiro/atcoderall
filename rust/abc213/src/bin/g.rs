@@ -17,30 +17,44 @@ macro_rules! eprintln {
 
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
+use proconio::marker::Usize1;
+use petgraph::unionfind::UnionFind;
 use static_prime_modint::*;
-
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        N: usize,
+        M: usize,
+        AB: [(Usize1,Usize1); M],
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
+    let mut ans = vec![ModInt::<_, Mod9>::new(0); N];
+    for p in 0..(1<<(N-1)){
+        let mut exist = vec![true; N];
+        let mut q = p;
+        for i in 1..N{
+            if q%2 == 1{
+                exist[i] = false;
+            }
+            q /= 2;
+        }
+        let mut tree: UnionFind<usize> = UnionFind::new(N);
+        let mut s = 0;
+        for &(a,b) in &AB{
+            if exist[a] && exist[b]{
+                tree.union(a,b);
+            }else{
+                s += 1;
+            }
+        }
+        for i in 1..N{
+            if tree.equiv(0, i){
+                ans[i] = ans[i] + ModInt::new(2).pow(s);
             }
         }
     }
-    println!("{}", dp[n][0][k])
+    for i in 1..N{
+        println!("{}", ans[i])
+    }
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

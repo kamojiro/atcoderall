@@ -17,20 +17,30 @@ macro_rules! eprintln {
 
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
+use superslice::Ext;
 
 #[fastout]
 fn main() {
     input!{
         N: usize,
-        mut A: [usize; N],
+        mut A: [i64; N],
     }
-    A.reverse();
-    let m = 1000_000_000_0;
-    let mut dp = vec![m; N+1];
+    let mut dp = vec![-1; N+1];
+    for a in A{
+        let x = dp.upper_bound_by(|x| a.cmp(x));
+        dp[x] = a;
+    }
+    for i in 0..=N{
+        if dp[i] == -1{
+            println!("{}", i);
+            return;
+        }
+    }
+    
     
 }
 
-fn upper_bound
+
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
 

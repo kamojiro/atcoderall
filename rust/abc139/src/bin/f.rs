@@ -15,32 +15,42 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use itertools::Itertools;
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
-use static_prime_modint::*;
+// use proconio::marker::Usize1;
+use num::complex::Complex;
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        N: usize,
+        XY: [(i64,i64); N],
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
-            }
+    let mut args = Vec::new();
+    for &(x,y) in &XY{
+        args.push(Complex::new(x as f64,y as f64).arg().to_degrees());
+    }
+    let order = (0..N).sorted_by(|&x,&y| args[x].partial_cmp(&args[y]).unwrap()).collect_vec();
+    let Z = XY.clone();
+    let XY: Vec<(i64,i64)> = order.iter().map(|&x| Z[x]).collect();
+    let mut ans = 0;
+    for i in 0..N{
+        let mut x = 0;
+        let mut y = 0;
+        for j in 0..N{
+            x += XY[(i+j)%N].0;
+            y += XY[(i+j)%N].1;
+            ans = ans.max(d((x,y)));
         }
+
     }
-    println!("{}", dp[n][0][k])
+    println!("{}", (ans as f64).sqrt());
+    
+}
+
+fn d((x,y):(i64,i64)) -> i64{
+    x*x+y*y
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

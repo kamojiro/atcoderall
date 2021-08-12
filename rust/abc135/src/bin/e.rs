@@ -15,32 +15,123 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use std::mem::swap;
+
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
-use static_prime_modint::*;
+// use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        K: i64,
+        mut X: i64,
+        mut Y: i64,
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
+    let reverse_x = if X < 0{true}else{false};
+    if reverse_x{
+        X = -X;
+    }
+    let reverse_y = if Y < 0{true}else{false};
+    if reverse_y{
+        Y = -Y;
+    }
+    let reverse_xy = if X < Y{true}else{false};
+    if reverse_xy{
+        swap(&mut X, &mut Y);
+    }
+    // K: even, X+Y: odd
+    if K%2 == 0 && (X+Y)%2 == 1{
+        println!("-1");
+        return;
+    }
+    let D = X+Y;
+    // n == 1
+    if D == K{
+        let ans = vec![(X,Y)];
+        print_ans(&ans, reverse_x, reverse_y, reverse_xy);
+        return;
+    }
+    let d_over_k = (D+K-1)/K;
+    let mut corner = Vec::new();
+
+    let mut n = d_over_k;
+    if d_over_k == 1{
+        n += 1;
+    }
+    if (n*K-D)%2 == 1{
+        n += 1;
+    }
+    if d_over_k == 1 && n == 3{
+        let a = (3*K-D)/2/2;
+        let b = (3*K-D)/2 - a;
+        corner.push((-b, 0));
+        corner.push((-b, Y+a));
+        corner.push((X, Y+a));
+    }else{
+        corner.push((0, -((n*K-D)/2)));
+        corner.push((X, -((n*K-D)/2)));
+    }
+    corner.push((X,Y));
+    let ans = make_ans(&corner, K);
+    print_ans(&ans, reverse_x, reverse_y, reverse_xy);
+}
+
+fn make_ans(corner: &Vec<(i64,i64)>, K: i64) -> Vec<(i64, i64)>{
+    let mut now_x = 0;
+    let mut now_y = 0;
+    let mut next = corner[0];
+    let mut index = 1;
+    let g_x = corner[corner.len()-1].0;
+    let g_y = corner[corner.len()-1].1;
+    let mut ret = Vec::new();
+    let mut stride = K;
+    loop {
+        if (now_x - next.0).abs() >= stride{
+            if now_x > next.0{
+                now_x -= stride
+            }else{
+                now_x += stride
             }
+        }else if (now_y - next.1).abs() >= stride{
+            if now_y > next.1{
+                now_y -= stride
+            }else{
+                now_y += stride
+            }            
+        }else{
+            stride = K - ((now_x - next.0).abs() + (now_y - next.1).abs());
+            now_x = next.0;
+            now_y = next.1;
+            next = corner[index];
+            index += 1;
+            continue;
+        }
+        ret.push((now_x, now_y));
+        stride = K;
+        if now_x == g_x && now_y == g_y{
+            break
         }
     }
-    println!("{}", dp[n][0][k])
+    ret
+}
+
+fn print_ans(ans: &Vec<(i64,i64)>, reverse_x: bool, reverse_y: bool, reverse_xy: bool){
+    println!("{}", ans.len());
+    for &(x,y) in ans{
+        let mut tx = x;
+        let mut ty = y;
+        if reverse_xy{
+            swap(&mut tx,&mut ty);
+        }
+        if reverse_y{
+            ty = -ty;
+        }
+        if reverse_x{
+            tx = -tx;
+        }
+        println!("{} {}", tx, ty);
+    }
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

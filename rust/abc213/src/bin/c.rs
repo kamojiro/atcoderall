@@ -15,32 +15,48 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use std::collections::HashMap;
+use std::collections::HashSet;
+
+use itertools::Itertools;
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
-use static_prime_modint::*;
+// use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
+    // input!{
+    //     H: usize,
+    //     W: usize,
+    //     N: usize,
+    //     AB: [(usize,usize; N)],
+    // }
     input!{
-        n: usize,
-        k: usize,
+        H: usize,
+        W: usize,
+        N: usize,
+        AB: [(usize,usize); N],
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
-            }
-        }
+    let mut is = HashSet::new();
+    let mut js = HashSet::new();
+    for &(a,b) in &AB{
+        is.insert(a);
+        js.insert(b);
     }
-    println!("{}", dp[n][0][k])
+    let ii: Vec<usize> = is.into_iter().sorted().collect();
+    let jj: Vec<usize> = js.into_iter().sorted().collect();
+    let mut is_order = HashMap::new();
+    let mut js_order = HashMap::new();
+    for (i,ii) in ii.iter().enumerate(){
+        is_order.insert(ii, i+1);
+    }
+    for (j, jj) in jj.iter().enumerate(){
+        js_order.insert(jj, j+1);
+    }
+    for &(a,b) in &AB{
+        println!("{} {}", is_order.get(&a).unwrap(), js_order.get(&b).unwrap());
+    }
+
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

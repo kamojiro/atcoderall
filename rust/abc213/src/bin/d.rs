@@ -17,30 +17,40 @@ macro_rules! eprintln {
 
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
-use static_prime_modint::*;
+use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        N: usize,
+        AB: [(Usize1, Usize1); N-1],
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
-            }
-        }
+    let mut edges = vec![vec![]; N];
+    for &(a,b) in &AB{
+        edges[a].push(b);
+        edges[b].push(a);
     }
-    println!("{}", dp[n][0][k])
+    for i in 0..N{
+        edges[i].sort();
+    }
+    let mut visited = vec![false; N];
+    visited[0] = true;
+    let mut ans = vec![];
+    dfs(&edges, 0, &mut visited, &mut ans);
+    for &a in &ans{
+        print!("{} ", a+1);
+    }
+    println!()
+}
+
+fn dfs(edges: &Vec<Vec<usize>>, v: usize, visited: &mut Vec<bool>, ans: &mut Vec<usize>){
+    ans.push(v);
+    for &w in &edges[v]{
+        if visited[w]{continue;}
+        visited[w] = true;
+        dfs(edges, w, visited, ans);
+        ans.push(v);
+    }
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

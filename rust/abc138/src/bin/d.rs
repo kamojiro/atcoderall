@@ -15,33 +15,61 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use std::collections::VecDeque;
+
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
-use static_prime_modint::*;
+use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        N: usize,
+        Q: usize,
+        AB: [(Usize1, Usize1); N-1],
+        PX: [(Usize1, u64); Q],
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
-            }
+    let mut edges = vec![vec![]; N];
+    for &(a,b) in &AB{
+        edges[a].push(b);
+        edges[b].push(a);
+    }
+    let bfs_order = get_bfs_order(&edges, 0);
+    let mut counter = vec![0; N];
+    for &(p,x) in &PX{
+        counter[p] += x;
+    }
+    let mut visited = vec![false; N];
+    for &v in &bfs_order{
+        visited[v] = true;
+        for &w in &edges[v]{
+            if visited[w]{continue;}
+            counter[w] += counter[v];
         }
     }
-    println!("{}", dp[n][0][k])
+    for i in 0..N{
+        print!("{} ", counter[i]);
+    }
+    println!();
 }
+
+fn get_bfs_order(edges: &Vec<Vec<usize>>, start: usize) -> Vec<usize>{
+    let mut bfs_order = Vec::new();
+    let mut queue = VecDeque::new();
+    let mut visited = vec![false; edges.len()];
+    visited[start] = true;
+    queue.push_back(start);
+    while let Some(v) = queue.pop_front(){
+        bfs_order.push(v);
+        for &w in &edges[v]{
+            if visited[w]{continue;}
+            visited[w] = true;
+            queue.push_back(w);
+        }
+    }
+    bfs_order
+}
+    
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
 

@@ -17,30 +17,45 @@ macro_rules! eprintln {
 
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
-use static_prime_modint::*;
+// use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        N: usize,
+        P: [usize;N],
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
+    let mut up = true;
+    let mut Q = P.clone();
+    for k in 0..(N-1){
+        if Q[k] > Q[k+1]{
+            up = false
+        }
+    }
+    if up{
+        println!("YES");
+        return
+    }
+
+    for i in 0..(N-1){
+        for j in (i+1)..N{
+            let mut Q = P.clone();
+            let t = Q[i];
+            Q[i] = Q[j];
+            Q[j] = t;
+            let mut up = true;
+            for k in 0..(N-1){
+                if Q[k] > Q[k+1]{
+                    up = false
                 }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
+            }
+            if up{
+                println!("YES");
+                return
             }
         }
     }
-    println!("{}", dp[n][0][k])
+    println!("NO")
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

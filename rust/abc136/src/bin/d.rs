@@ -16,31 +16,56 @@ macro_rules! eprintln {
 }
 
 use proconio::{fastout, input};
-// use proconio::marker::Bytes;
-use static_prime_modint::*;
+use proconio::marker::Bytes;
+// use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        S: Bytes,
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
+    let n = S.len();
+    let mut r = false;
+    let mut rcount = 0;
+    let mut ans = vec![0; n];
+    for i in 0..n{
+        if S[i] == b'R'{
+            if r{
+                rcount += 1;
+            }else{
+                r = true;
+                rcount = 1;
             }
+        }else{
+            if r{
+                ans[i-1] += rcount - rcount/2;
+                ans[i] += rcount/2;
+            }
+            r = false;
         }
     }
-    println!("{}", dp[n][0][k])
+    let mut l = false;
+    let mut lcount = 0;
+    for i in (0..n).rev(){
+        if S[i] == b'L'{
+            if l{
+                lcount += 1;
+            }else{
+                l = true;
+                lcount = 1;
+            }
+        }else{
+            if l{
+                ans[i+1] += lcount - lcount/2;
+                ans[i] += lcount/2
+            }
+            l = false
+        }
+    }
+    for a in ans{
+        print!("{} ", a);
+    }
+    println!()
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

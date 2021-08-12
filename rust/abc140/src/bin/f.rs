@@ -15,32 +15,59 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use std::collections::BinaryHeap;
+use std::collections::HashMap;
+use std::collections::HashSet;
+
+use itertools::Itertools;
 use proconio::{fastout, input};
+use std::cmp::Reverse;
 // use proconio::marker::Bytes;
-use static_prime_modint::*;
+// use proconio::marker::Usize1;
+
+// ref.
+// https://ikatakos.com/pot/programming_algorithm/contest_history/atcoder/2019/0907_abc140
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        N: usize,
+        mut S: [usize; 2.pow(N as u32)],
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
+    let mut counter = HashMap::new();
+    let mut set = HashSet::new();
+    for &s in &S{
+        let c = counter.entry(s).or_insert(0);
+        *c += 1;
+        set.insert(s);
+    }
+    let order = set.into_iter().sorted_by_key(|&x| Reverse(x)).collect_vec();
+    if *counter.get(&order[0]).unwrap() > 1{
+        println!("No");
+        return;
+    }
+    let mut heap = BinaryHeap::new();
+    heap.push(Reverse(0));
+    for i in 1..order.len(){
+        let s = order[i];
+        let count = *counter.get(&s).unwrap();
+        let mut tmp = Vec::new();
+        for _ in 0..count{
+            if let Some(Reverse(x)) = heap.pop(){
+                if x == N-1{
+                    continue;
+                }else{
+                    heap.push(Reverse(x+1));
+                    tmp.push(Reverse(x+1));
                 }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
+            }else{
+                println!("No");
+                return;
             }
         }
+        heap.extend(tmp);
     }
-    println!("{}", dp[n][0][k])
+    println!("Yes")
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

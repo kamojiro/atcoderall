@@ -16,31 +16,40 @@ macro_rules! eprintln {
 }
 
 use proconio::{fastout, input};
-// use proconio::marker::Bytes;
+use proconio::marker::Bytes;
+// use proconio::marker::Usize1;
 use static_prime_modint::*;
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        S: Bytes,
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
+    let T: Vec<usize> = S.into_iter().map(|x| x - b'0').map(|x| x as usize).collect();
+    // 0123456789?
+    // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 15]
+    let mut dp = vec![vec![ModInt::<_, Mod10>::new(0); 13]; T.len()+1];
+    dp[0][0] = ModInt::new(1);
+    for i in 0..T.len(){
+        let t = T[i];
+        if t == 15{
+            for f in 0..13{
+                for k in 0..10{
+                    dp[i+1][(10*f+k)%13] = dp[i+1][(10*f+k)%13] + dp[i][f];
                 }
             }
+        }else{
+            let k = t;
+            for f in 0..13{
+                dp[i+1][(10*f+k)%13] = dp[i+1][(10*f+k)%13] + dp[i][f];
+            }            
         }
     }
-    println!("{}", dp[n][0][k])
+    // for i in 0..=T.len(){
+    //     eprintln!("{:?}", dp[i])
+    // }
+    println!("{}", dp[T.len()][5])
+    
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

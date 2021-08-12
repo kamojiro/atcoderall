@@ -15,32 +15,61 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use std::collections::HashMap;
+
+use itertools::Itertools;
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
+// use proconio::marker::Usize1;
 use static_prime_modint::*;
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        N: usize,
+        original_XY: [(i64,i64); N],
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
-            }
-        }
+    let mut x_hash: HashMap<i64,i64> = HashMap::new();
+    let mut y_hash: HashMap<i64,i64> = HashMap::new();
+    let mut XY = coodinate_compression(original_XY, &mut x_hash, &mut y_hash);
+    XY.sort();
+    let mut checked_segt = SegmentTree::new(N, || 0, |a,b| a+b);
+    let mut unchecked_segt = SegmentTree::new(N, || 0, |a,b| a+b);
+    for i in 0..N{
+        unchecked_segt.update(i, 1);
     }
-    println!("{}", dp[n][0][k])
+    let mut ans = ModInt::<_, Mod9>::new(0);
+    for &(_,yy) in &XY{
+        let y = yy as usize;
+        let mp = checked_segt.query((y+1)..(N+1));
+        let mm = checked_segt.query(0..y);
+        let pp = unchecked_segt.query((y+1)..(N+1));
+        let pm = unchecked_segt.query(0..y);
+        let zmp = ModInt::new(2).pow(mp);
+        let zmm = ModInt::new(2).pow(mm);
+        let zpp = ModInt::new(2).pow(pp);
+        let zpm = ModInt::new(2).pow(pm);
+        let one = ModInt::new(1);
+        ans = ans + (zmp - one)*(zpm - one)*zpp*zmm;
+        ans = ans + zmp*zpm*(zpp - one)*(zmm - one);
+        ans = ans - (zmp - one)*(zpm - one)*(zpp - one)*(zmm - one);
+        ans = ans + ModInt::new(2).pow(N-1);
+        checked_segt.update(y, 1);
+        unchecked_segt.update(y, 0);
+    }
+    println!("{}", ans);
+    
+}
+
+fn coodinate_compression(XY: Vec<(i64, i64)>, x_hash: &mut HashMap<i64,i64>, y_hash: &mut HashMap<i64,i64>) -> Vec<(i64,i64)>{
+    let n = XY.len();
+    let sorted_X = XY.iter().map(|&x| x.0).sorted().collect_vec();
+    let sorted_Y = XY.iter().map(|&x| x.1).sorted().collect_vec();
+    for i in 0..n{
+        x_hash.insert(sorted_X[i], i as i64);
+        y_hash.insert(sorted_Y[i], i as i64);
+    }
+    XY.iter().map(|x| (*x_hash.get(&x.0).unwrap(), *y_hash.get(&x.1).unwrap())).collect_vec()
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

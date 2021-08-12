@@ -15,32 +15,62 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use std::collections::HashSet;
+
 use proconio::{fastout, input};
-// use proconio::marker::Bytes;
-use static_prime_modint::*;
+use proconio::marker::Bytes;
+// use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        S: Bytes,
+        T: Bytes,
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
-            }
+    let mut hash = HashSet::new();
+    for s in &S{
+        hash.insert(s);
+    }
+    for t in &T{
+        if !hash.contains(t){
+            println!("-1");
+            return;
         }
     }
-    println!("{}", dp[n][0][k])
+    let N = S.len();
+    let mut next = vec![vec![0;S.len()];26];
+    for c in (0..26).map(|x| x as usize){
+        let mut index = Vec::new();
+        for i in 0..S.len(){
+            if S[i] == b'a' + (c as u8){
+                index.push(i);
+            }
+        }
+        if index.len() == 0{continue;}
+        let m = index.len();
+        let mut now = 0;
+        for i in 0..m{
+            for j in now..=index[i]{
+                next[c][j] = index[i];
+            }
+            now = index[i]+1;
+        }
+        for j in now..N{
+            next[c][j] = index[0];
+        }
+    }
+    let mut ans = 0;
+    let mut now = 0;
+    for &t in &T{
+        if now == (next[(t - b'a') as usize][now]+1)%N{
+            ans += N
+        }else{
+            ans += (next[(t - b'a') as usize][now] + N - now + 1)%N;
+            now = (next[(t - b'a') as usize][now] + 1)%N;
+        }
+    }
+    println!("{}", ans);
+
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

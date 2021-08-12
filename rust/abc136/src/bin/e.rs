@@ -15,32 +15,47 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use std::cmp::max;
+
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
-use static_prime_modint::*;
+// use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        N: usize,
+        K: i64,
+        A: [i64; N],
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
-                }
+    let s = A.iter().fold(0, |x,a| x+a);
+    let mut divs: Vec<i64> = divisors(s as u64).into_iter().map(|x| x as i64).collect();
+    divs.sort();
+    divs.reverse();
+    for &d in &divs{
+        if A.iter().all(|&x| x%d == 0){
+            println!("{}", d);
+            return;
+        }
+        let mut B: Vec<i64> = A.iter().map(|&x| x%d).filter(|&x| x > 0).collect();
+        B.sort();
+        let mut t = B.iter().fold(0, |s,x| s+(d - x));
+        if t <= K{
+            println!("{}", d);
+            return;
+        }
+        let mut now = 0;
+        for &b in &B{
+            now += b;
+            t -= d-b;
+            // println!("d:{} now:{} t:{}",d, now, t);
+            if max(now, t) <= K{
+                println!("{}", d);
+                return;
             }
         }
+        
     }
-    println!("{}", dp[n][0][k])
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

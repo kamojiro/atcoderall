@@ -17,30 +17,45 @@ macro_rules! eprintln {
 
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
-use static_prime_modint::*;
+// use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
-        n: usize,
-        k: usize,
+        N: usize,
+        P: [usize; N],
     }
-    let mut dp = vec![vec![vec![ModInt::<_, Mod10>::new(0); n*n+1]; n+1]; n+1];
-    dp[0][0][0] = ModInt::new(1);
-    for i in 1..=n{
-        for j in 0..=n{
-            for k in 2*j..=n*n{
-                dp[i][j][k] = dp[i-1][j][k-2*j]*ModInt::new(2*j+1);
-                if j+1 <= n{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j+1][k-2*j]*ModInt::new((j+1)*(j+1));
-                }
-                if j > 0{
-                    dp[i][j][k] = dp[i][j][k] + dp[i-1][j-1][k-2*j];
+    let mut pos = vec![0; N+1];
+    for i in 0..N{
+        pos[P[i]] = i;
+    }
+    let mut segt = SegmentTree::new(N, || 0, |a,b| a+b);
+    let mut ans = 0;
+    for i in (1..=N).rev(){
+        segt.update(pos[i], 1);
+        let s = segt.query(0..(pos[i]+1));
+        let mut bound = Vec::new();
+        for s2 in vec![s-2,s-1,s+1,s+2]{
+            if s2 <= 0{
+                bound.push(-1);
+                continue;
+            }
+            let mut ok = N as i64;
+            let mut ng = -1;
+            while ok - ng > 1{
+                let m = ((ok+ng)>>1) as usize;
+                if segt.query(0..(m+1)) >= s2{
+                    ok = m as i64
+                }else{
+                    ng = m as i64
                 }
             }
+            bound.push(ok)
         }
+        let res = (bound[1]-bound[0])*(bound[2]-(pos[i] as i64)) + ((pos[i] as i64) - bound[1])*(bound[3] - bound[2]);
+        ans += res*(i as i64);
     }
-    println!("{}", dp[n][0][k])
+    println!("{}", ans);
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

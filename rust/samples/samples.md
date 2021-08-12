@@ -58,6 +58,11 @@
 
 - [abc201_e](https://atcoder.jp/contests/abc201/submissions/22638193)
 
+#### オイラーツアー/euler tour
+
+- [abc213_d](https://atcoder.jp/contests/abc213/submissions/24870447)
+
+
 ### 木DP
 
 - [abc201_e](https://atcoder.jp/contests/abc201/submissions/22638193)
@@ -86,7 +91,7 @@
 
 - [typical90_065](https://atcoder.jp/contests/typical90/submissions/23848763)
 
-### divisors
+### divisors/約数列挙
 
 - [abc212_g](https://atcoder.jp/contests/abc212/submissions/24714938)
 
@@ -102,9 +107,14 @@
 
 ### SegmentTree
 
+- [abc136_f](https://atcoder.jp/contests/abc136/submissions/24940123)
 - [abc190_f](https://atcoder.jp/contests/abc190/submissions/20418253)
 - [abc186_f](https://atcoder.jp/contests/abc186/submissions/20684886)
 - [typical90_017](https://atcoder.jp/contests/typical90/submissions/22504447)
+
+#### multiset
+
+- [abc140_e](https://atcoder.jp/contests/abc140/submissions/24958302)
 
 ### BTreeMap
 
@@ -132,6 +142,7 @@
 
 ### LIS
 
+- [abc124_e](https://atcoder.jp/contests/abc134/submissions/24754818)
 - [typical90_060](https://atcoder.jp/contests/typical90/submissions/23684627)
   - comment outの方
 
@@ -189,9 +200,18 @@
 
 ## 文字列
 
-### ローリングハッシュ
+### ローリングハッシュ/Rolling-Hash
 
 - [typical90_047](https://atcoder.jp/contests/typical90/submissions/23533450)
+
+### Z-algorithm
+
+- [abc135_f](https://atcoder.jp/contests/abc135/submissions/24935087)
+
+### lcp-array
+
+- [abc213_f](https://atcoder.jp/contests/abc213/submissions/24878501)
+- [abc213_f](https://atcoder.jp/contests/abc213/submissions/24879074)
 
 ## others
 
@@ -227,3 +247,7 @@
 
 - [typical90_059](https://atcoder.jp/contests/typical90/submissions/23682843)
 
+### 座標圧縮/coodinate compression
+
+- [abc136_f](https://atcoder.jp/contests/abc136/submissions/24940123)
+- [abc213_d](https://atcoder.jp/contests/abc213/submissions/24865307)
