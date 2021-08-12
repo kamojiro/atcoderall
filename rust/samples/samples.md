@@ -95,6 +95,10 @@
 
 - [abc212_g](https://atcoder.jp/contests/abc212/submissions/24714938)
 
+### 掃き出し法
+
+- [abc141_f](https://atcoder.jp/contests/abc141/submissions/24977299)
+
 ## 強連結成分分解
 
 - [typical90_021](https://atcoder.jp/contests/typical90/submissions/22658911)
@@ -207,6 +211,7 @@
 ### Z-algorithm
 
 - [abc135_f](https://atcoder.jp/contests/abc135/submissions/24935087)
+- [abc141_e](https://atcoder.jp/contests/abc141/submissions/24974866)
 
 ### lcp-array
 
