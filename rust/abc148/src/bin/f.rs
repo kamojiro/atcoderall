@@ -15,40 +15,53 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use std::collections::VecDeque;
+
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
-// use proconio::marker::Usize1;
-use static_prime_modint::*;
+use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
-        X: usize,
-        Y: usize,
+        N: usize,
+        u: Usize1,
+        v: Usize1,
+        AB: [(Usize1, Usize1); N-1],
     }
-    if 2*X < Y{
-        println!("0");
-        return
-    }else if (2*X - Y)%3 != 0{ 
-        println!("0");
-        return
+    let mut edges = vec![vec![]; N];
+    for &(a,b) in &AB{
+        edges[a].push(b);
+        edges[b].push(a);
     }
-    if 2*Y < X{
-        println!("0");
-        return;
+    let mut queue_t = VecDeque::new();
+    let mut queue_a = VecDeque::new();
+    queue_t.push_back(u);
+    queue_a.push_back(v);
+    let mut cost_t = vec![N; N];
+    let mut cost_a = vec![N; N];
+    cost_t[u] = 0;
+    cost_a[v] = 0;
+    while let Some(v) = queue_a.pop_front(){
+        for &w in &edges[v]{
+            if cost_a[w] < N{continue}
+            cost_a[w] = cost_a[v]+1;
+            queue_a.push_back(w);
+        }
     }
-    let mut m = (2*X - Y)/3;
-    let mut n = (2*Y - X)/3;
-    // eprintln!("{} {}", n,m);
-    let mut ans = ModInt::<_, Mod10>::new(1);
-    if n > m{
-        std::mem::swap(&mut n, &mut m)
+    while let Some(v) = queue_t.pop_front(){
+        for &w in &edges[v]{
+            if cost_t[w] < N{continue}
+            if cost_a[w] <= cost_t[v]+1{continue;}
+            cost_t[w] = cost_t[v]+1;
+            queue_t.push_back(w);
+        }
     }
-    for i in 1..=n{
-        ans *= ModInt::new(m+i);
-        ans *=  ModInt::new(i).pow(1_000_000_007-2);
-    }
+    // eprintln!("t {:?}", cost_t);
+    // eprintln!("a {:?}", cost_a);
+    let ans = (0..N).filter(|&x| cost_t[x] < N).map(|x| cost_a[x]).max().unwrap() -1;
     println!("{}", ans);
+
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

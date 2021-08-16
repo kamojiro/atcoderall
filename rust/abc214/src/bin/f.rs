@@ -16,39 +16,50 @@ macro_rules! eprintln {
 }
 
 use proconio::{fastout, input};
-// use proconio::marker::Bytes;
+use proconio::marker::Bytes;
 // use proconio::marker::Usize1;
 use static_prime_modint::*;
 
 #[fastout]
 fn main() {
     input!{
-        X: usize,
-        Y: usize,
+        S: Bytes,
     }
-    if 2*X < Y{
-        println!("0");
-        return
-    }else if (2*X - Y)%3 != 0{ 
-        println!("0");
-        return
+    let n = S.len();
+    let mut next = vec![vec![n; 26]; n+1];
+    for i in (0..n).rev(){
+        for j in 0..26{
+            next[i][j] = next[i+1][j];
+            if i+1 < n{
+                if j == (S[i+1] - b'a') as usize{
+                    next[i][j] = i+1;
+                }
+            }
+        }
     }
-    if 2*Y < X{
-        println!("0");
-        return;
+    // eprintln!("{:?}", next);
+    let mut dp = vec![ModInt::<_, Mod10>::new(0); n+1];
+    dp[0] = ModInt::new(1);
+    let mut visited = vec![false;26];
+    for i in 0..n{
+        if visited[(S[i] - b'a') as usize]{continue;}
+        visited[(S[i] - b'a') as usize] = true;
+        dp[i+1] = ModInt::new(1);
     }
-    let mut m = (2*X - Y)/3;
-    let mut n = (2*Y - X)/3;
-    // eprintln!("{} {}", n,m);
-    let mut ans = ModInt::<_, Mod10>::new(1);
-    if n > m{
-        std::mem::swap(&mut n, &mut m)
+    // eprintln!("{:?}", dp);
+    for i in 1..n{
+        for j in 0..26{
+            if next[i][j] >= n{continue;}
+            dp[next[i][j]+1] = dp[next[i][j]+1] + dp[i];
+        }
+        // eprintln!("{:?}", dp);
     }
+    let mut ans = ModInt::new(0);
     for i in 1..=n{
-        ans *= ModInt::new(m+i);
-        ans *=  ModInt::new(i).pow(1_000_000_007-2);
+        ans = ans + dp[i];
     }
-    println!("{}", ans);
+    println!("{}", ans)
+    
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

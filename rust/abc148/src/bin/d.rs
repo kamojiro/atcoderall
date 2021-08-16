@@ -18,37 +18,24 @@ macro_rules! eprintln {
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
 // use proconio::marker::Usize1;
-use static_prime_modint::*;
 
 #[fastout]
 fn main() {
     input!{
-        X: usize,
-        Y: usize,
+        N: usize,
+        A: [usize; N],
     }
-    if 2*X < Y{
-        println!("0");
-        return
-    }else if (2*X - Y)%3 != 0{ 
-        println!("0");
-        return
+    let mut index = 0;
+    for i in 0..N{
+        if A[i] == index+1{
+            index += 1;
+        }
     }
-    if 2*Y < X{
-        println!("0");
-        return;
+    if index == 0{
+        println!("-1")
+    }else{
+        println!("{}", N-index)
     }
-    let mut m = (2*X - Y)/3;
-    let mut n = (2*Y - X)/3;
-    // eprintln!("{} {}", n,m);
-    let mut ans = ModInt::<_, Mod10>::new(1);
-    if n > m{
-        std::mem::swap(&mut n, &mut m)
-    }
-    for i in 1..=n{
-        ans *= ModInt::new(m+i);
-        ans *=  ModInt::new(i).pow(1_000_000_007-2);
-    }
-    println!("{}", ans);
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

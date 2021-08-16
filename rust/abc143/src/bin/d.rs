@@ -18,37 +18,40 @@ macro_rules! eprintln {
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
 // use proconio::marker::Usize1;
-use static_prime_modint::*;
 
 #[fastout]
 fn main() {
     input!{
-        X: usize,
-        Y: usize,
+        N: usize,
+        L: [usize; N],
     }
-    if 2*X < Y{
-        println!("0");
-        return
-    }else if (2*X - Y)%3 != 0{ 
-        println!("0");
-        return
+    let p = 1000;
+    let mut count = vec![0; p*2+1];
+    for &l in &L{
+        count[l] += 1;
     }
-    if 2*Y < X{
-        println!("0");
-        return;
+    (0..p*2).for_each(|x| count[x+1] += count[x]);
+    let mut ans: usize = 0;
+    for i in 0..N{
+        for j in 0..N{
+            if i == j{continue;}
+            // eprintln!("i {}, j {}", i, j);
+            let a = L[i];
+            let b = L[j];
+            let m = ((a as i64) - (b as i64)).abs() as usize;
+            let M = a+b;
+            // eprintln!("aaa {} {}", m, M);
+            ans += count[M-1] - count[m];
+            // eprintln!("bbb {} {}", count[M-1], count[m]);
+            if m < a && a < M{
+                ans -= 1;
+            }
+            if m < b && b < M{
+                ans -= 1;
+            }
+        }
     }
-    let mut m = (2*X - Y)/3;
-    let mut n = (2*Y - X)/3;
-    // eprintln!("{} {}", n,m);
-    let mut ans = ModInt::<_, Mod10>::new(1);
-    if n > m{
-        std::mem::swap(&mut n, &mut m)
-    }
-    for i in 1..=n{
-        ans *= ModInt::new(m+i);
-        ans *=  ModInt::new(i).pow(1_000_000_007-2);
-    }
-    println!("{}", ans);
+    println!("{}", ans/6);
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

@@ -17,38 +17,27 @@ macro_rules! eprintln {
 
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
-// use proconio::marker::Usize1;
-use static_prime_modint::*;
+use proconio::marker::Usize1;
+use petgraph::unionfind::UnionFind;
 
 #[fastout]
 fn main() {
     input!{
-        X: usize,
-        Y: usize,
+        N: usize,
+        mut UVW: [(Usize1,Usize1,usize); N-1],
     }
-    if 2*X < Y{
-        println!("0");
-        return
-    }else if (2*X - Y)%3 != 0{ 
-        println!("0");
-        return
-    }
-    if 2*Y < X{
-        println!("0");
-        return;
-    }
-    let mut m = (2*X - Y)/3;
-    let mut n = (2*Y - X)/3;
-    // eprintln!("{} {}", n,m);
-    let mut ans = ModInt::<_, Mod10>::new(1);
-    if n > m{
-        std::mem::swap(&mut n, &mut m)
-    }
-    for i in 1..=n{
-        ans *= ModInt::new(m+i);
-        ans *=  ModInt::new(i).pow(1_000_000_007-2);
+    UVW.sort_by_key(|&x| x.2);
+    let mut tree: UnionFind<usize> = UnionFind::new(N);
+    let mut count: Vec<usize> = vec![1; N];
+    let mut ans = 0;
+    for &(u,v,w) in &UVW{
+        ans += count[tree.find(u)]*count[tree.find(v)]*w;
+        let t = count[tree.find(u)] + count[tree.find(v)];
+        tree.union(u, v);
+        count[tree.find(u)] = t;
     }
     println!("{}", ans);
+    
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

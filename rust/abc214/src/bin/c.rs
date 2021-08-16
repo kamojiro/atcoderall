@@ -15,40 +15,37 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use std::collections::BinaryHeap;
+
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
 // use proconio::marker::Usize1;
-use static_prime_modint::*;
+use std::cmp::Reverse;
 
 #[fastout]
 fn main() {
     input!{
-        X: usize,
-        Y: usize,
+        N: usize,
+        S: [usize; N],
+        T: [usize; N],
     }
-    if 2*X < Y{
-        println!("0");
-        return
-    }else if (2*X - Y)%3 != 0{ 
-        println!("0");
-        return
+    let mut queue = BinaryHeap::new();
+    for i in 0..N{
+        queue.push((Reverse(T[i]), i));
     }
-    if 2*Y < X{
-        println!("0");
-        return;
+    let mut visited = vec![false; N];
+    let mut ans = vec![0; N];
+    while let Some((Reverse(x), i)) = queue.pop(){
+        if visited[i]{continue;}
+        visited[i] = true;
+        ans[i] = x;
+        let j = (i+1)%N;
+        if visited[j]{continue;}
+        queue.push((Reverse(x+S[i]), j));
     }
-    let mut m = (2*X - Y)/3;
-    let mut n = (2*Y - X)/3;
-    // eprintln!("{} {}", n,m);
-    let mut ans = ModInt::<_, Mod10>::new(1);
-    if n > m{
-        std::mem::swap(&mut n, &mut m)
+    for a in ans{
+        println!("{}", a);
     }
-    for i in 1..=n{
-        ans *= ModInt::new(m+i);
-        ans *=  ModInt::new(i).pow(1_000_000_007-2);
-    }
-    println!("{}", ans);
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

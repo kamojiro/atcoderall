@@ -8,6 +8,7 @@
 
 - [superslice](https://docs.rs/superslice/1.0.0/x86_64-apple-darwin/superslice/trait.Ext.html)
   - lower_bound, upper_bound
+  - permutation
 
 ## shotest path
 
@@ -79,6 +80,10 @@
 
 ## math
 
+### gcd
+
+- [abc148_c](https://atcoder.jp/contests/abc148/submissions/25100287)
+
 ### CRT
 
 - [abc193_e](https://atcoder.jp/contests/abc193/submissions/21493526)
@@ -91,6 +96,11 @@
 
 - [typical90_065](https://atcoder.jp/contests/typical90/submissions/23848763)
 
+### combination/組み合わせ
+
+- [abc145_d](https://atcoder.jp/contests/abc145/submissions/25077608)
+
+
 ### divisors/約数列挙
 
 - [abc212_g](https://atcoder.jp/contests/abc212/submissions/24714938)
@@ -98,6 +108,10 @@
 ### 掃き出し法
 
 - [abc141_f](https://atcoder.jp/contests/abc141/submissions/24977299)
+
+### permutation/順列組み合わせ
+
+- [abc145_c](https://atcoder.jp/contests/abc145/submissions/25075865)
 
 ## 強連結成分分解
 
@@ -155,6 +169,11 @@
 - [typical90_060](https://atcoder.jp/contests/typical90/submissions/23684627)
 
 
+### 文字列の部分文字列
+
+- [Qiita: 部分列 DP --- 文字列の部分文字列を重複なく走査する DP の特集](https://qiita.com/drken/items/a207e5ae3ea2cf17f4bd)
+- [abc214_f](https://atcoder.jp/contests/abc214/submissions/25051933)
+
 ## メモ化再帰
 
 - [abc201_d](https://atcoder.jp/contests/abc201/submissions/22617285)
@@ -188,6 +207,7 @@
 
 ### Argument sort
 
+- [abc139_f](https://atcoder.jp/contests/abc139/submissions/24955086)
 - [typical90_009](https://atcoder.jp/contests/typical90/submissions/22348600)
 
 ### f64 sort
@@ -200,6 +220,7 @@
 
 ### Bytes to String
 
+- [abc148_b](https://atcoder.jp/contests/abc148/submissions/25100312)
 - [Qiita 2017: Rustでバイト列から文字列へ](https://qiita.com/4hiziri/items/dd9800ad7be42c395082)
 
 ## 文字列
@@ -256,3 +277,7 @@
 
 - [abc136_f](https://atcoder.jp/contests/abc136/submissions/24940123)
 - [abc213_d](https://atcoder.jp/contests/abc213/submissions/24865307)
+
+### [L,R] がいっぱいある時に、優先度付きキューを使って、K <= L なる [L,R] の R を小さい方から取っていくテクニック
+
+- [abc214_e](https://atcoder.jp/contests/abc214/submissions/25058829)

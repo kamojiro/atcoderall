@@ -15,40 +15,60 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use std::collections::BinaryHeap;
+
+use proconio::marker::Usize1;
 use proconio::{fastout, input};
 // use proconio::marker::Bytes;
 // use proconio::marker::Usize1;
-use static_prime_modint::*;
+
+use std::cmp::Reverse;
 
 #[fastout]
 fn main() {
     input!{
-        X: usize,
-        Y: usize,
+        N: usize,
+        M: usize,
+        L: usize,
+        ABC: [(Usize1, Usize1, usize); M],
+        Q: usize,
+        ST: [(Usize1, Usize1); Q],
     }
-    if 2*X < Y{
-        println!("0");
-        return
-    }else if (2*X - Y)%3 != 0{ 
-        println!("0");
-        return
+    let mut edges = vec![vec![]; N];
+    for &(a,b,c) in &ABC{
+        edges[a].push((b,c));
+        edges[b].push((a,c));
     }
-    if 2*Y < X{
-        println!("0");
-        return;
+    let mut ans = Vec::new();
+    for i in 0..N{
+        let x = dijkstra(i, L, &edges);
+        ans.push(x);
     }
-    let mut m = (2*X - Y)/3;
-    let mut n = (2*Y - X)/3;
-    // eprintln!("{} {}", n,m);
-    let mut ans = ModInt::<_, Mod10>::new(1);
-    if n > m{
-        std::mem::swap(&mut n, &mut m)
+    for &(s,t) in &ST{
+        println!("{}", ans[s][t]);
     }
-    for i in 1..=n{
-        ans *= ModInt::new(m+i);
-        ans *=  ModInt::new(i).pow(1_000_000_007-2);
+}
+
+fn dijkstra(start: usize,L: usize, edges: &Vec<Vec<(usize, usize)>>) -> Vec<i64>{
+    let n = edges.len();
+    let mut ret = vec![-1; n];
+    let mut visited = vec![false; n];
+    let mut queue = BinaryHeap::new();
+    queue.push((Reverse(0), L, start));
+    while let Some((Reverse(times), rest, v)) = queue.pop(){
+        if visited[v]{continue;}
+        visited[v] = true;
+        ret[v] = times;
+        for &(w, cost) in &edges[v]{
+            if visited[w]{continue;}
+            if cost <= rest{
+                queue.push((Reverse(times), rest-cost, w))
+            }else if cost <= L{
+                queue.push((Reverse(times+1), L-cost, w))
+            }
+        }
     }
-    println!("{}", ans);
+    ret
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
