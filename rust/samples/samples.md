@@ -47,6 +47,10 @@
 
 - [typical90_039](https://atcoder.jp/contests/typical90/submissions/23277846)
 
+###　子全体と自分自身の合計
+
+- [abc149_f](https://atcoder.jp/contests/abc149/submissions/25121248)
+
 #### 2色
 
 - [typical90_026](https://atcoder.jp/contests/typical90/submissions/23094838)
@@ -87,6 +91,10 @@
 ### CRT
 
 - [abc193_e](https://atcoder.jp/contests/abc193/submissions/21493526)
+
+### 素数判定/is_prime
+
+- [abc149_c](https://atcoder.jp/contests/abc149/submissions/25121102)
 
 ### eratosthenes
 
