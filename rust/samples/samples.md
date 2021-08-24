@@ -1,5 +1,9 @@
 # Rust samples
 
+## URL
+
+- [beet's soil: 典型テクニックまとめ](https://beet-aizu.github.io/blog/technique.html)
+
 ## default
 
 - [crate一覧](https://github.com/rust-lang-ja/atcoder-rust-resources/wiki/2020-Update)
@@ -31,11 +35,17 @@
 
 ### Kluscal
 
-- [typical90_049](https://atcoder.jp/contests/typical90/submissions/23534946)
+- [typical90_049](
+https://atcoder.jp/contests/typical90/submissions/23534946)
 
 ### 01-bfs
 
 - [typical90_054](https://atcoder.jp/contests/typical90/submissions/23551245)
+
+### bfs 復元
+
+- [abc152_f](https://atcoder.jp/contests/abc152/submissions/25317249)
+  - edgeを復元
 
 ## tree
 
@@ -47,7 +57,7 @@
 
 - [typical90_039](https://atcoder.jp/contests/typical90/submissions/23277846)
 
-###　子全体と自分自身の合計
+###　子全体と自分自身の頂点の合計
 
 - [abc149_f](https://atcoder.jp/contests/abc149/submissions/25121248)
 
@@ -102,16 +112,23 @@
 
 ### factorial, inversed factorial, inverse
 
+- [abc151_e](https://atcoder.jp/contests/abc151/submissions/25298366)
+  - Mod10
 - [typical90_065](https://atcoder.jp/contests/typical90/submissions/23848763)
+  - Mod9
 
-### combination/組み合わせ
+### 組み合わせ/combination
 
 - [abc145_d](https://atcoder.jp/contests/abc145/submissions/25077608)
 
 
-### divisors/約数列挙
+### 約数列挙/divisors
 
 - [abc212_g](https://atcoder.jp/contests/abc212/submissions/24714938)
+
+### 素因数分解/prime factors
+
+- [abc152_e](https://atcoder.jp/contests/abc152/submissions/25316960)
 
 ### 掃き出し法
 
@@ -119,6 +136,7 @@
 
 ### permutation/順列組み合わせ
 
+- [abc150_c](https://atcoder.jp/contests/abc150/submissions/25139881)
 - [abc145_c](https://atcoder.jp/contests/abc145/submissions/25075865)
 
 ## 強連結成分分解
@@ -152,6 +170,7 @@
 
 ### ModInt
 
+- [abc152_e](https://atcoder.jp/contests/abc152/submissions/25316960)
 - [typical90_005](https://atcoder.jp/contests/typical90/submissions/22335098)
 - [arc115_d](https://atcoder.jp/contests/arc115/submissions/21492649)
 - [abc190_e](https://atcoder.jp/contests/abc190/submissions/20417897)
@@ -199,6 +218,10 @@
 ### ピックの定理
 
 - [typical90_041](https://atcoder.jp/contests/typical90/submissions/23480538)
+
+### 最小包含円/smallest enclosing circle
+
+- [abc151_f](https://atcoder.jp/contests/abc151/submissions/25299668)
 
 ## rust
 
