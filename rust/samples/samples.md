@@ -31,6 +31,7 @@
 
 ### Union-Find
 
+- [abc155_f](https://atcoder.jp/contests/abc155/submissions/25489528)
 - [typical90_049](https://atcoder.jp/contests/typical90/submissions/23534946)
 
 ### Kluscal
@@ -72,6 +73,7 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 #### 帰りがけdfs
 
 - [abc201_e](https://atcoder.jp/contests/abc201/submissions/22638193)
+- [abc155_f](https://atcoder.jp/contests/abc155/submissions/25489528)
 
 #### オイラーツアー/euler tour
 
@@ -112,6 +114,8 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 
 ### factorial, inversed factorial, inverse
 
+- [abc156_e](https://atcoder.jp/contests/abc156/submissions/25504638)
+  - Mod10
 - [abc151_e](https://atcoder.jp/contests/abc151/submissions/25298366)
   - Mod10
 - [typical90_065](https://atcoder.jp/contests/typical90/submissions/23848763)
@@ -119,8 +123,8 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 
 ### 組み合わせ/combination
 
+- [abc156_c](https://atcoder.jp/contests/abc156/submissions/25504193)
 - [abc145_d](https://atcoder.jp/contests/abc145/submissions/25077608)
-
 
 ### 約数列挙/divisors
 
@@ -231,6 +235,8 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 
 #### lower_bound
 
+- [abc155_e](https://atcoder.jp/contests/abc155/submissions/25350593)
+  - upper_bound
 - [typical90_009](https://atcoder.jp/contests/typical90/submissions/23013185)
 - [typical90_051](https://atcoder.jp/contests/typical90/submissions/23535554)
   - a以下の個数
@@ -306,6 +312,7 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 
 ### 座標圧縮/coodinate compression
 
+- [abc155_f](https://atcoder.jp/contests/abc155/submissions/25489528)
 - [abc136_f](https://atcoder.jp/contests/abc136/submissions/24940123)
 - [abc213_d](https://atcoder.jp/contests/abc213/submissions/24865307)
 
