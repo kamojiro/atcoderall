@@ -3,6 +3,7 @@
 ## URL
 
 - [beet's soil: 典型テクニックまとめ](https://beet-aizu.github.io/blog/technique.html)
+- [Qiita@drken: 「写像12相」を総整理！ 〜 数え上げ問題の学びの宝庫 〜](https://qiita.com/drken/items/f2ea4b58b0d21621bd51)
 
 ## default
 
@@ -21,8 +22,6 @@
 - [abc192_e](https://atcoder.jp/contests/abc192/submissions/20316664)
 - [typical90_013](https://atcoder.jp/contests/typical90/submissions/22372833)
 
-## DAG
-
 ### topoligical sort
 
 - ??[dp_g](https://atcoder.jp/contests/dp/submissions/22523617)
@@ -33,6 +32,10 @@
 
 - [abc155_f](https://atcoder.jp/contests/abc155/submissions/25489528)
 - [typical90_049](https://atcoder.jp/contests/typical90/submissions/23534946)
+
+#### weighted Union-Find
+
+- [abc157_d](https://atcoder.jp/contests/abc157/submissions/25692198)
 
 ### Kluscal
 
@@ -47,6 +50,12 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 
 - [abc152_f](https://atcoder.jp/contests/abc152/submissions/25317249)
   - edgeを復元
+
+## grid
+
+### 平行移動、回転/translation, rotation
+
+- [abc218_c](https://atcoder.jp/contests/abc218/submissions/25785699)
 
 ## tree
 
@@ -126,6 +135,10 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 - [abc156_c](https://atcoder.jp/contests/abc156/submissions/25504193)
 - [abc145_d](https://atcoder.jp/contests/abc145/submissions/25077608)
 
+#### 高速
+
+- [abc217_f](https://atcoder.jp/contests/abc217/submissions/25654443)
+
 ### 約数列挙/divisors
 
 - [abc212_g](https://atcoder.jp/contests/abc212/submissions/24714938)
@@ -155,6 +168,7 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 
 ### SegmentTree
 
+- [abc157_e](https://atcoder.jp/contests/abc157/submissions/25690688)
 - [abc136_f](https://atcoder.jp/contests/abc136/submissions/24940123)
 - [abc190_f](https://atcoder.jp/contests/abc190/submissions/20418253)
 - [abc186_f](https://atcoder.jp/contests/abc186/submissions/20684886)
@@ -163,6 +177,10 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 #### multiset
 
 - [abc140_e](https://atcoder.jp/contests/abc140/submissions/24958302)
+
+### BTreeSet
+
+- [abc217_d](https://atcoder.jp/contests/abc217/submissions/25610895)
 
 ### BTreeMap
 
@@ -213,7 +231,7 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 
 - [typical90_045](https://atcoder.jp/contests/typical90/submissions/23514708)
 
-## 幾何
+## 幾何/geometry
 
 ### 凸法
 
@@ -226,6 +244,10 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 ### 最小包含円/smallest enclosing circle
 
 - [abc151_f](https://atcoder.jp/contests/abc151/submissions/25299668)
+
+### 2円の交点
+
+- [abc157_f](https://atcoder.jp/contests/abc157/submissions/25706253)
 
 ## rust
 
@@ -254,6 +276,14 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 ### print vector
 
 - [abc200_d](https://atcoder.jp/contests/abc200/submissions/22441762)
+
+### char to byte
+
+```rust
+let b = c as u8; 
+```
+
+- [abc157_e](https://atcoder.jp/contests/abc157/submissions/25690688)
 
 ### Bytes to String
 
