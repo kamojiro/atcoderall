@@ -15,84 +15,34 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
-use std::collections::HashSet;
-
-use itertools::Itertools;
 use proconio::{fastout, input};
+// use proconio::marker::Bytes;
 use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
         N: usize,
-        M: usize,
-        Q: usize,
-        AB: [(Usize1,Usize1); M],
-        X: [Usize1; Q],
+        A: [Usize1; N],
     }
-    let mut edges = vec![vec![];N];
-    let mut count = vec![0;N];
-    let mut is_edge = HashSet::new();
-    for &(a, b) in &AB{
-        edges[a].push(b);
-        edges[b].push(a);
+    let mut count: Vec<usize> = vec![0; N];
+    for &a in &A{
         count[a] += 1;
-        count[b] += 1;
-        is_edge.insert((a,b));
-        is_edge.insert((b,a));
     }
-    let B = 630;
-    let mut big_vertices = Vec::new();
-    let mut is_big = vec![false;N];
-
-    for v in 0..N{
-        if count[v] >= B{
-            big_vertices.push(v);
-            is_big[v] = true;
+    let mut ans = 0;
+    for &c in &count{
+        if c >= 2{
+            ans += c*(c-1)/2;
         }
     }
-    let mut big_edges = vec![Vec::new(); N];
-    for v in 0..N{
-        for &w in &edges[v]{
-            if is_big[w]{
-                big_edges[v].push(w)
-            }
-        }
-    }
-
-    let mut color = (1..(N+1)).map(|x| (0,x)).collect_vec();    
-    let mut changed = vec![(0,0); N];
-
-    for q in 0..Q{
-        let x = X[q];
-        let mut v = color[x];
-        for &b in &big_edges[x]{
-            if v.0 < changed[b].0{
-                v = changed[b];
-            }
-        }
-        v.0 = q+1;
-        if is_big[x]{
-            changed[x] = v;
+    for &a in &A{
+        let c = count[a];
+        if c >= 2{
+            println!("{}", ans - c*(c-1)/2 + (c-1)*(c-2)/2)
         }else{
-            for &w in &edges[x]{
-                color[w] = v;
-            }
+            println!("{}", ans)
         }
     }
-    for i in 0..N{
-        let mut v = color[i];
-        for &b in &big_edges[i]{
-            if v.0 < changed[b].0{
-                v = changed[b];
-            }
-        }
-        color[i] = v;
-    }
-    for &a in &color{
-        print!("{} ", a.1);
-    }
-    println!()
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

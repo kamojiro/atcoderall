@@ -15,84 +15,47 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
-use std::collections::HashSet;
-
 use itertools::Itertools;
 use proconio::{fastout, input};
-use proconio::marker::Usize1;
+// use proconio::marker::Bytes;
+// use proconio::marker::Usize1;
+use std::collections::{HashMap, HashSet};
+use static_prime_modint::*;
 
 #[fastout]
 fn main() {
     input!{
         N: usize,
-        M: usize,
-        Q: usize,
-        AB: [(Usize1,Usize1); M],
-        X: [Usize1; Q],
+        mut A: [usize; N],
     }
-    let mut edges = vec![vec![];N];
-    let mut count = vec![0;N];
-    let mut is_edge = HashSet::new();
-    for &(a, b) in &AB{
-        edges[a].push(b);
-        edges[b].push(a);
-        count[a] += 1;
-        count[b] += 1;
-        is_edge.insert((a,b));
-        is_edge.insert((b,a));
+    let set: HashSet<_> = A.iter().collect();
+    let mut sorted = set.iter().map(|&&x| x).collect_vec();
+    sorted.sort();
+    let mut comp = HashMap::new();
+    for (i, &x) in sorted.iter().enumerate(){
+        comp.insert(x, i);
     }
-    let B = 630;
-    let mut big_vertices = Vec::new();
-    let mut is_big = vec![false;N];
+    let mut segti = SegmentTree::new(N+1, || ModInt::<usize, Mod9>::new(0), |a,b| a+b);
+    let mut counti = vec![ModInt::<usize, Mod9>::new(0);N];
 
-    for v in 0..N{
-        if count[v] >= B{
-            big_vertices.push(v);
-            is_big[v] = true;
-        }
-    }
-    let mut big_edges = vec![Vec::new(); N];
-    for v in 0..N{
-        for &w in &edges[v]{
-            if is_big[w]{
-                big_edges[v].push(w)
-            }
-        }
-    }
-
-    let mut color = (1..(N+1)).map(|x| (0,x)).collect_vec();    
-    let mut changed = vec![(0,0); N];
-
-    for q in 0..Q{
-        let x = X[q];
-        let mut v = color[x];
-        for &b in &big_edges[x]{
-            if v.0 < changed[b].0{
-                v = changed[b];
-            }
-        }
-        v.0 = q+1;
-        if is_big[x]{
-            changed[x] = v;
-        }else{
-            for &w in &edges[x]{
-                color[w] = v;
-            }
-        }
-    }
+    let mut ans = ModInt::<_, Mod9>::new(0);
+    let Q = 998_244_353;
+    let q = ModInt::new(2).pow(Q-2);
+    let mut pp = ModInt::new(1);
+    let mut qq = ModInt::new(1);
     for i in 0..N{
-        let mut v = color[i];
-        for &b in &big_edges[i]{
-            if v.0 < changed[b].0{
-                v = changed[b];
-            }
+        let a = A[i];
+        let ca = *comp.get(&a).unwrap();
+        let ia = segti.query(0..(ca+1));
+        if i >= 1{
+            ans += ia*pp;
+            pp *= ModInt::new(2);
         }
-        color[i] = v;
+        counti[ca] = counti[ca] + qq;
+        qq *= q;
+        segti.update(ca, counti[ca]);
     }
-    for &a in &color{
-        print!("{} ", a.1);
-    }
-    println!()
+    println!("{}", ans);
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

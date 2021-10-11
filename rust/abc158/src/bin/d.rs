@@ -15,84 +15,55 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
-use std::collections::HashSet;
+use std::collections::VecDeque;
 
 use itertools::Itertools;
 use proconio::{fastout, input};
-use proconio::marker::Usize1;
+use proconio::marker::Bytes;
+// use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
-        N: usize,
-        M: usize,
+        S: Bytes,
         Q: usize,
-        AB: [(Usize1,Usize1); M],
-        X: [Usize1; Q],
     }
-    let mut edges = vec![vec![];N];
-    let mut count = vec![0;N];
-    let mut is_edge = HashSet::new();
-    for &(a, b) in &AB{
-        edges[a].push(b);
-        edges[b].push(a);
-        count[a] += 1;
-        count[b] += 1;
-        is_edge.insert((a,b));
-        is_edge.insert((b,a));
+    let mut q = VecDeque::new();
+    for &s in &S{
+        q.push_back(s)
     }
-    let B = 630;
-    let mut big_vertices = Vec::new();
-    let mut is_big = vec![false;N];
-
-    for v in 0..N{
-        if count[v] >= B{
-            big_vertices.push(v);
-            is_big[v] = true;
+    let mut reversed = false;
+    for _ in 0..Q{
+        input! {
+            t: usize,
         }
-    }
-    let mut big_edges = vec![Vec::new(); N];
-    for v in 0..N{
-        for &w in &edges[v]{
-            if is_big[w]{
-                big_edges[v].push(w)
-            }
-        }
-    }
-
-    let mut color = (1..(N+1)).map(|x| (0,x)).collect_vec();    
-    let mut changed = vec![(0,0); N];
-
-    for q in 0..Q{
-        let x = X[q];
-        let mut v = color[x];
-        for &b in &big_edges[x]{
-            if v.0 < changed[b].0{
-                v = changed[b];
-            }
-        }
-        v.0 = q+1;
-        if is_big[x]{
-            changed[x] = v;
+        if t == 1{
+            reversed = !reversed;
         }else{
-            for &w in &edges[x]{
-                color[w] = v;
+            input! {
+                f: usize,
+                c: char,
+            }
+            if f == 1{
+                if reversed{
+                    q.push_back(c as u8)
+                }else{
+                    q.push_front(c as u8)
+                }
+            }else{
+                if reversed{
+                    q.push_front(c as u8)
+                }else{
+                    q.push_back(c as u8)
+                }
             }
         }
     }
-    for i in 0..N{
-        let mut v = color[i];
-        for &b in &big_edges[i]{
-            if v.0 < changed[b].0{
-                v = changed[b];
-            }
-        }
-        color[i] = v;
+    let mut ans = q.into_iter().collect_vec();
+    if reversed{
+        ans.reverse();
     }
-    for &a in &color{
-        print!("{} ", a.1);
-    }
-    println!()
+    println!("{}", ans.iter().map(|&s| s as char).collect::<String>());
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

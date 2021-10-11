@@ -15,84 +15,57 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
-use std::collections::HashSet;
-
 use itertools::Itertools;
 use proconio::{fastout, input};
-use proconio::marker::Usize1;
+// use proconio::marker::Bytes;
+// use proconio::marker::Usize1;
+use std::cmp::Reverse;
+use std::collections::VecDeque;
+// use superslice::Ext;
+use static_prime_modint::*;
 
 #[fastout]
 fn main() {
     input!{
         N: usize,
-        M: usize,
-        Q: usize,
-        AB: [(Usize1,Usize1); M],
-        X: [Usize1; Q],
+        mut XD: [(i64, i64); N],
     }
-    let mut edges = vec![vec![];N];
-    let mut count = vec![0;N];
-    let mut is_edge = HashSet::new();
-    for &(a, b) in &AB{
-        edges[a].push(b);
-        edges[b].push(a);
-        count[a] += 1;
-        count[b] += 1;
-        is_edge.insert((a,b));
-        is_edge.insert((b,a));
-    }
-    let B = 630;
-    let mut big_vertices = Vec::new();
-    let mut is_big = vec![false;N];
-
-    for v in 0..N{
-        if count[v] >= B{
-            big_vertices.push(v);
-            is_big[v] = true;
-        }
-    }
-    let mut big_edges = vec![Vec::new(); N];
-    for v in 0..N{
-        for &w in &edges[v]{
-            if is_big[w]{
-                big_edges[v].push(w)
-            }
-        }
-    }
-
-    let mut color = (1..(N+1)).map(|x| (0,x)).collect_vec();    
-    let mut changed = vec![(0,0); N];
-
-    for q in 0..Q{
-        let x = X[q];
-        let mut v = color[x];
-        for &b in &big_edges[x]{
-            if v.0 < changed[b].0{
-                v = changed[b];
-            }
-        }
-        v.0 = q+1;
-        if is_big[x]{
-            changed[x] = v;
-        }else{
-            for &w in &edges[x]{
-                color[w] = v;
-            }
-        }
-    }
+    XD.sort_by_key(|x| Reverse(x.0));
+    let mut q: VecDeque<i64> = VecDeque::new();
+    let mut dp = vec![vec![ModInt::<_,Mod9>::new(0);2];N+1];
+    dp[0][1] = ModInt::new(1);
+    let mut cc: Vec<usize> = (0..N).collect_vec();
+    let mut segt = SegmentTree::new(N, || std::usize::MAX, |a,b| a.min(b));
     for i in 0..N{
-        let mut v = color[i];
-        for &b in &big_edges[i]{
-            if v.0 < changed[b].0{
-                v = changed[b];
-            }
+        let (x,d) = XD[i];
+        let count = lower_bound(&q, x+d);
+        if count > 0{
+            cc[i] = segt.query((i-count)..i);
         }
-        color[i] = v;
+        segt.update(i, cc[i]);
+        q.push_front(x);
+        dp[i+1][0] = dp[cc[i]][0]+dp[cc[i]][1];
+        dp[i+1][1] = dp[i][0] + dp[i][1];
     }
-    for &a in &color{
-        print!("{} ", a.1);
+    println!("{}", dp[N][0] + dp[N][1])
+}
+
+fn lower_bound(A: &VecDeque<i64>, a: i64) -> usize {
+    if A.is_empty(){return 0}
+    let N = A.len();
+    if A[N-1] < a{return N}
+    if a <= A[0]{return 0}
+    let mut l = 0;
+    let mut r = N;
+    while r - l > 1{
+        let m = (l+r)/2;
+        if A[m] < a{
+            l = m
+        }else{
+            r = m
+        }
     }
-    println!()
+    l+1
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

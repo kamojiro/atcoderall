@@ -93,7 +93,7 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 
 - [abc201_e](https://atcoder.jp/contests/abc201/submissions/22638193)
 
-### LCA
+### LCA/Lowest Common Ancestor
 
 - [typical90_035](https://atcoder.jp/contests/typical90/submissions/23207160)
 
@@ -168,6 +168,7 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 
 ### SegmentTree
 
+- [abc518_f](https://atcoder.jp/contests/abc158/submissions/26210249)
 - [abc157_e](https://atcoder.jp/contests/abc157/submissions/25690688)
 - [abc136_f](https://atcoder.jp/contests/abc136/submissions/24940123)
 - [abc190_f](https://atcoder.jp/contests/abc190/submissions/20418253)
@@ -259,6 +260,8 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 
 - [abc155_e](https://atcoder.jp/contests/abc155/submissions/25350593)
   - upper_bound
+- [abc158_f](https://atcoder.jp/contests/abc158/submissions/26210249)
+  - for VecDeque
 - [typical90_009](https://atcoder.jp/contests/typical90/submissions/23013185)
 - [typical90_051](https://atcoder.jp/contests/typical90/submissions/23535554)
   - a以下の個数
