@@ -3,45 +3,199 @@
 
 #[cfg(debug_assertions)]
 #[allow(unused)]
-macro_rules! debug_eprintln {
+macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {
-        eprintln!($p, $($x,)*);
+        std::eprintln!($p, $($x,)*);
     };
 }
- 
+
 #[cfg(not(debug_assertions))]
 #[allow(unused)]
-macro_rules! debug_eprintln {
+macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use itertools::Itertools;
 use proconio::{fastout, input};
+// use proconio::marker::Bytes;
+// use proconio::marker::Usize1;
 
 #[fastout]
 fn main() {
     input!{
         N: usize,
-        A: [usize; N],
+        S: [usize; N],
+        T: [usize; N],
+        U: [usize; N],
+        V: [usize; N],
     }
-    let mut accA = vec![0; N+1];
-    for (i, &a) in A.iter().enumerate(){
-        accA[i+1] = accA[i] + a;
+    let mut ans = vec![vec![0; N]; N];
+    for k in 0..64{
+        let BU = U.iter().map(|&u| u>>k&1).collect_vec();
+        let mut R = vec![0; N];
+        let BV = V.iter().map(|&v| v>>k&1).collect_vec();
+        let mut C = vec![0; N];
+        let mut kans = vec![vec![0; N]; N];
+        for i in 0..N{
+            if S[i] == 0 && BU[i] == 1{
+                for j in 0..N{
+                    kans[i][j] = 1;
+                }
+                R[i] = 1;
+            }else if S[i] == 1 && BU[i] == 0{
+                R[i] = 1;
+            }
+        }
+        for j in 0..N{
+            if T[j] == 0 && BV[j] == 1{
+                for i in 0..N{
+                    kans[i][j] = 1;
+                }
+                C[j] = 1;
+            }else if T[j] == 1 && BV[j] == 0{
+                C[j] = 1;
+            }
+        }
+
+        let sr = N - R.iter().map(|&x| x).fold(0, |s,x| s+x);
+        let sc = N - C.iter().map(|&x| x).fold(0, |s,x| s+x);
+        if sr == 0 || sc == 0{            
+        }else if sr == 1 || sc == 1{
+            if sr == 1{
+                let mut index = 0;
+                for i in 0..N{
+                    if R[i] == 0{
+                        index = i;
+                        break;
+                    }
+                }
+                for j in 0..N{
+                    if T[j] == 0{
+                        let mut t = 1;
+                        for i in 0..N{
+                            if i == index{continue;}
+                            t &= kans[i][j]
+                        }
+                        if t == BV[j]{
+                            kans[index][j] = BU[index];
+                        }else{
+                            kans[index][j] = BV[j];
+                        }
+                    }else{
+                        let mut t = 0;
+                        for i in 0..N{
+                            if i == index{continue;}
+                            t |= kans[i][j]
+                        }
+                        if t == BV[j]{
+                            kans[index][j] = BU[index];
+                        }else{
+                            kans[index][j] = BV[j];
+                        }
+                    }
+                }
+            }else{
+                let mut jndex = 0;
+                for j in 0..N{
+                    if C[j] == 0{
+                        jndex = j;
+                        break;
+                    }
+                }
+                for i in 0..N{
+                    if S[i] == 0{
+                        let mut s = 1;
+                        for j in 0..N{
+                            if j == jndex{continue;}
+                            s &= kans[i][j]
+                        }
+                        if s == BV[i]{
+                            kans[i][jndex] = BV[jndex];
+                        }else{
+                            kans[i][jndex] = BU[i];
+                        }
+                    }else{
+                        let mut s = 0;
+                        for j in 0..N{
+                            if j == jndex{continue;}
+                            s |= kans[i][j]
+                        }
+                        if s == BU[i]{
+                            kans[i][jndex] = BV[jndex];
+                        }else{
+                            kans[i][jndex] = BU[i];
+                        }
+                    }
+                }                
+            }
+        }else{
+            let mut r = 0;
+            for i in 0..N{
+                if R[i] == 1{continue;}
+                let mut c = 0;
+                for j in 0..N{
+                    if C[j] == 1{continue;}
+                    kans[i][j] = r^c;
+                    c ^= 1;
+                }
+                r ^= 1;
+            }
+            
+        }
+        if k < 4{
+            eprintln!("kans: {:?}", kans);
+        }
+        if check(&S, &T, &BU, &BV, &kans){
+            let m = 1<<k;
+            for i in 0..N{
+                for j in 0..N{
+                    if kans[i][j] == 1{
+                        ans[i][j] += m;
+                    }
+                }
+            }
+        }
+        if k < 4{
+            eprintln!("ans: {:?}", ans);
+        }
     }
-    let mut dp = vec![vec![0; N]; N];
-    let mut flag = vec![vec![false; N]; N];
-    println!("{}", f(0, N-1, &accA, &mut flag, &mut dp))
+    if check(&S, &T, &U, &V, &ans){
+        for i in 0..N{
+            for j in 0..N{
+                print!("{} ", ans[i][j])
+            }
+            println!()
+        }
+    }else{
+        println!("-1")
+    }
 }
 
-fn f(l: usize, r: usize, accA: &Vec<usize>, flag: &mut Vec<Vec<bool>>, dp: &mut Vec<Vec<usize>>) -> usize{
-    if flag[l][r]{return dp[l][r]}
-    flag[l][r] = true;
-    if l == r {return 0}
-    let mut s = std::usize::MAX;
-    for i in l..r{
-        s = s.min(f(l, i, accA, flag, dp) + f(i+1, r, accA, flag, dp));
+fn check(S: &Vec<usize>, T: &Vec<usize>, U: &Vec<usize>, V: &Vec<usize>, A: &Vec<Vec<usize>>) -> bool{
+    let n = S.len();
+    for i in 0..n{
+        if S[i] == 0{
+            if A[i].iter().map(|&x| x).fold(1, |s,x| s&x) != U[i]{
+                return false
+            }
+        }else{
+            if A[i].iter().map(|&x| x).fold(0, |s,x| s|x) != U[i]{
+                return false
+            }            
+        }
     }
-    dp[l][r] = s + accA[r+1] - accA[l];
-    dp[l][r]
+    for j in 0..n{
+        if T[j] == 0{
+            if (0..n).map(|i| A[i][j]).fold(1, |s,x| s&x) != V[j]{
+                return false
+            }
+        }else{
+            if (0..n).map(|i| A[i][j]).fold(0, |s,x| s|x) != V[j]{
+                return false
+            }            
+        }
+    }
+    true
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
@@ -516,7 +670,7 @@ mod modint {
         }
     }
  
-    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+    #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct ModInt<T, M>(T, M)
     where
         M: Modulus<T>,
@@ -569,6 +723,27 @@ mod modint {
             }
         }
     }
+
+    impl<T, M> std::fmt::Display for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
+    impl<T, M> std::fmt::Debug for  ModInt<T, M>
+    where
+        M: Modulus<T>,
+        T: NumAssignOps + PrimInt + Unsigned + std::fmt::Display,
+    {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.value())
+        }
+    }
+
     impl<M> ModInt<usize, M>
     where
         M: StaticModulus<usize>,
@@ -866,17 +1041,15 @@ trait RangeQuery<T> {
     fn query(&self, r: T) -> Self::Output;
 }
  
-use std::ops::Range;
- 
 #[allow(dead_code)]
-impl<A, CUnit, CMult> RangeQuery<Range<usize>> for SegmentTree<A, CUnit, CMult>
+impl<A, CUnit, CMult> RangeQuery<std::ops::Range<usize>> for SegmentTree<A, CUnit, CMult>
 where
     A: Copy,
     CUnit: Fn() -> A,
     CMult: Fn(A, A) -> A,
 {
     type Output = A;
-    fn query(&self, range: Range<usize>) -> A {
+    fn query(&self, range: std::ops::Range<usize>) -> A {
         let n = (self.data.len() + 1) / 2;
         return self.query_internal(range.start, range.end, 0, 0, n);
     }
@@ -941,3 +1114,134 @@ where
     // a*n+b = y*m+z
     return floor_sum(y, a, m, z);
 }
+
+// Lazy segment tree for range query and range update, alike problems
+// The closures must fulfill the defining laws of monoids
+// Indexing is 0-based
+// The code is based on the following web site.
+// https://algo-logic.info/segment-tree/
+#[derive(Clone, PartialEq, Debug)]
+struct LazySegmentTree<A, CUnit, CMult> {
+    data: Vec<A>,
+    lazy: Vec<A>,
+    monoid_unit_closure: CUnit,
+    monoid_op_closure: CMult,
+}
+
+#[allow(dead_code)]
+impl<A, CUnit, CMult> LazySegmentTree<A, CUnit, CMult>
+where
+    A: Copy + std::cmp::Eq,
+    CUnit: Fn() -> A,
+    CMult: Fn(A, A) -> A,
+{
+    fn new(n: usize, monoid_unit_closure: CUnit, monoid_op_closure: CMult) -> Self {
+        let mut nn = 1;
+        while nn < n {
+            nn *= 2;
+        }
+        let this = Self {
+            data: vec![monoid_unit_closure(); 2 * nn - 1],
+            lazy: vec![monoid_unit_closure(); 2 * nn - 1],
+            monoid_unit_closure,
+            monoid_op_closure,
+        };
+        return this;
+    }
+
+    fn from_slice(sl: &[A], monoid_unit_closure: CUnit, monoid_op_closure: CMult) -> Self {
+        let n = sl.len();
+        let mut nn = 1;
+        while nn < n {
+            nn *= 2;
+        }
+        let mut data = vec![monoid_unit_closure(); 2 * nn - 1];
+        for k in 0..n {
+            data[k + nn - 1] = sl[k];
+        }
+        if n >= 2 {
+            for j in (0..=(n + nn - 3) / 2).rev() {
+                data[j] = (monoid_op_closure)(data[j * 2 + 1], data[j * 2 + 2]);
+            }
+        }
+        let lazy = vec![monoid_unit_closure(); 2 * nn - 1];
+        Self {
+            data,
+            lazy,
+            monoid_unit_closure,
+            monoid_op_closure,
+        }
+    }
+
+    fn eval(&mut self, k: usize) {
+        if self.lazy[k] == (self.monoid_unit_closure)() {
+            return;
+        }
+        let n = (self.lazy.len() + 1) / 2;
+        if k < n - 1 {
+            self.lazy[k * 2 + 1] = self.lazy[k];
+            self.lazy[k * 2 + 2] = self.lazy[k];
+        }
+        self.data[k] = self.lazy[k];
+        self.lazy[k] = (self.monoid_unit_closure)();
+    }
+
+    fn sub_update(&mut self, a: usize, b: usize, x: A, k: usize, l: usize, r: usize) {
+        self.eval(k);
+        if a <= l && r <= b {
+            self.lazy[k] = x;
+            self.eval(k);
+        } else if a < r && l < b {
+            self.sub_update(a, b, x, k * 2 + 1, l, (l + r) / 2);
+            self.sub_update(a, b, x, k * 2 + 2, (l + r) / 2, r);
+            self.data[k] = (self.monoid_op_closure)(self.data[k * 2 + 1], self.data[k * 2 + 2]);
+        }
+    }
+
+    fn update_internal(&mut self, a: usize, b: usize, x: A) {
+        let n = (self.lazy.len() + 1) / 2;
+        self.sub_update(a, b, x, 0, 0, n)
+    }
+
+    fn sub_query_internal(&mut self, a: usize, b: usize, k: usize, l: usize, r: usize) -> A {
+        self.eval(k);
+        if r <= a || b <= l {
+            (self.monoid_unit_closure)()
+        } else if a <= l && r <= b {
+            self.data[k]
+        } else {
+            let vl = self.sub_query_internal(a, b, k * 2 + 1, l, (l + r) / 2);
+            let vr = self.sub_query_internal(a, b, k * 2 + 2, (l + r) / 2, r);
+            (self.monoid_op_closure)(vl, vr)
+        }
+    }
+
+    fn query_internal(&mut self, a: usize, b: usize) -> A {
+        let n = (self.lazy.len() + 1) / 2;
+        self.sub_query_internal(a, b, 0, 0, n)
+    }
+}
+
+trait LazyRangeQuery<T> {
+    type Output;
+    fn query(&mut self, r: T) -> Self::Output;
+    fn update(&mut self, r: T, x: Self::Output);
+}
+
+#[allow(dead_code)]
+impl<A, CUnit, CMult> LazyRangeQuery<std::ops::Range<usize>> for LazySegmentTree<A, CUnit, CMult>
+where
+    A: Copy + std::cmp::Eq,
+    CUnit: Fn() -> A,
+    CMult: Fn(A, A) -> A,
+{
+    type Output = A;
+    fn query(&mut self, range: std::ops::Range<usize>) -> A {
+        return self.query_internal(range.start, range.end);
+    }
+
+    fn update(&mut self, range: std::ops::Range<usize>, x: A) {
+        self.update_internal(range.start, range.end, x);
+    }
+}
+

@@ -4,6 +4,8 @@
 
 - [beet's soil: 典型テクニックまとめ](https://beet-aizu.github.io/blog/technique.html)
 - [Qiita@drken: 「写像12相」を総整理！ 〜 数え上げ問題の学びの宝庫 〜](https://qiita.com/drken/items/f2ea4b58b0d21621bd51)
+- [AtCoder Beginner Contest 204 D,E,F問題メモ](https://ikatakos.com/pot/programming_algorithm/contest_history/atcoder/2021/0606_abc204)
+  - F で dfs を使った遷移テーブルの作り方に軽く触れている
 
 ## default
 
@@ -14,6 +16,12 @@
 - [superslice](https://docs.rs/superslice/1.0.0/x86_64-apple-darwin/superslice/trait.Ext.html)
   - lower_bound, upper_bound
   - permutation
+
+## 全探索
+
+### N個の仕切りとM−1個のボールを並び替える列
+
+- [abc165_c](https://atcoder.jp/contests/abc165/submissions/27134119)
 
 ## shotest path
 
@@ -87,11 +95,16 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 #### オイラーツアー/euler tour
 
 - [abc213_d](https://atcoder.jp/contests/abc213/submissions/24870447)
+- [abc165_f](https://atcoder.jp/contests/abc165/submissions/27135287)
 
 
 ### 木DP
 
 - [abc201_e](https://atcoder.jp/contests/abc201/submissions/22638193)
+
+### 全方位木DP
+
+- [abc160_f](https://atcoder.jp/contests/abc160/submissions/26504274)
 
 ### LCA/Lowest Common Ancestor
 
@@ -123,6 +136,10 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 
 ### factorial, inversed factorial, inverse
 
+- [abc160_f](https://atcoder.jp/contests/abc160/submissions/26504761)
+  - CombinatoricsTable
+- [abc160_f](https://atcoder.jp/contests/abc160/submissions/26504274)
+  - Mod10
 - [abc156_e](https://atcoder.jp/contests/abc156/submissions/25504638)
   - Mod10
 - [abc151_e](https://atcoder.jp/contests/abc151/submissions/25298366)
@@ -174,6 +191,10 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 - [abc190_f](https://atcoder.jp/contests/abc190/submissions/20418253)
 - [abc186_f](https://atcoder.jp/contests/abc186/submissions/20684886)
 - [typical90_017](https://atcoder.jp/contests/typical90/submissions/22504447)
+
+### LazySegmentTree/遅延セグメントツリー
+
+- [abc223_f](https://atcoder.jp/contests/abc223/submissions/26654781)
 
 #### multiset
 
