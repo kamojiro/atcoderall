@@ -15,53 +15,26 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
-use proconio::{input};
-use proconio::marker::Bytes;
+use proconio::{fastout, input};
+// use proconio::marker::Bytes;
 // use proconio::marker::Usize1;
 
+#[fastout]
 fn main() {
     input!{
-        S: Bytes,
+        xy: [(i64, i64); 3],
     }
-    let n = S.len();
-    let mut nums = vec![0; 10];
-    for &s in &S{
-        nums[(s - b'0') as usize] += 1;
+    let mut ans = (0, 0);
+    for i in 0..3{
+        let j = (i+1)%3;
+        if xy[i].0 == xy[j].0{
+            ans.0 = xy[3 - i - j].0;
+        }
+        if xy[i].1 == xy[j].1{
+            ans.1 = xy[3 - i - j].1;
+        }
     }
-    'target: for i in 1..125{
-        let mut m = i*8;
-        let mut num = vec![0; 10];
-        if m%10 == 0 || m%100 == 0{
-            continue;
-        }
-        if m/10 > 0 && m/10%10 == 0{
-            continue;
-        }
-        for _ in 0..3{
-            num[m%10] += 1;
-            m /= 10;
-        }
-        if 3 > n{
-            for i in 1..10{
-                if num[i] != nums[i]{
-                    continue 'target
-                }
-            }
-            println!("Yes");
-            return;
-        }
-        if num[0] > 0{
-            continue 'target
-        }
-        for i in 1..10{
-            if num[i] > nums[i]{
-                continue 'target
-            }
-        }
-        println!("Yes");
-        return;
-    }
-    println!("No");
+    println!("{} {}", ans.0, ans.1)
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

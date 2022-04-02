@@ -15,53 +15,45 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
-use proconio::{input};
-use proconio::marker::Bytes;
-// use proconio::marker::Usize1;
 
+use proconio::{fastout, input};
+
+#[fastout]
 fn main() {
     input!{
-        S: Bytes,
+        N: u64,
     }
-    let n = S.len();
-    let mut nums = vec![0; 10];
-    for &s in &S{
-        nums[(s - b'0') as usize] += 1;
+    if N == 0{
+        println!("0");
+        return
     }
-    'target: for i in 1..125{
-        let mut m = i*8;
-        let mut num = vec![0; 10];
-        if m%10 == 0 || m%100 == 0{
-            continue;
+    let T: u64 = 1000000;
+    let mut ans: u64 = T.pow(3);
+    for a in 0..=T{
+        if f(a, T) < N{
+            continue
         }
-        if m/10 > 0 && m/10%10 == 0{
-            continue;
+        if f(a, 0) >= N{
+            ans = ans.min(f(a, 0));
+            continue
         }
-        for _ in 0..3{
-            num[m%10] += 1;
-            m /= 10;
-        }
-        if 3 > n{
-            for i in 1..10{
-                if num[i] != nums[i]{
-                    continue 'target
-                }
-            }
-            println!("Yes");
-            return;
-        }
-        if num[0] > 0{
-            continue 'target
-        }
-        for i in 1..10{
-            if num[i] > nums[i]{
-                continue 'target
+        let mut l = 0;
+        let mut r = T;
+        while r - l > 1{
+            let m = (l+r)/2;
+            if f(a, m) >= N{
+                r = m;
+            }else{
+                l = m
             }
         }
-        println!("Yes");
-        return;
+        ans = ans.min(f(a, r))
     }
-    println!("No");
+    println!("{}", ans);
+}
+
+fn f(a: u64, b: u64) -> u64{
+    a*a*a + a*a*b + a*b*b + b*b*b
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

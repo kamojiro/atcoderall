@@ -15,53 +15,98 @@ macro_rules! eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
-use proconio::{input};
-use proconio::marker::Bytes;
-// use proconio::marker::Usize1;
+use std::collections::VecDeque;
 
+use proconio::{fastout, input};
+use proconio::marker::{Bytes, Usize1};
+
+#[fastout]
 fn main() {
     input!{
-        S: Bytes,
+        N: usize,
+        A: (Usize1, Usize1),
+        B: (Usize1, Usize1),
+        S: [Bytes; N],
     }
-    let n = S.len();
-    let mut nums = vec![0; 10];
-    for &s in &S{
-        nums[(s - b'0') as usize] += 1;
-    }
-    'target: for i in 1..125{
-        let mut m = i*8;
-        let mut num = vec![0; 10];
-        if m%10 == 0 || m%100 == 0{
-            continue;
-        }
-        if m/10 > 0 && m/10%10 == 0{
-            continue;
-        }
-        for _ in 0..3{
-            num[m%10] += 1;
-            m /= 10;
-        }
-        if 3 > n{
-            for i in 1..10{
-                if num[i] != nums[i]{
-                    continue 'target
+    let mut queue = VecDeque::new();
+    queue.push_back((A.0, A.1));
+    
+    let mut board = vec![vec![std::usize::MAX; N]; N];
+    board[A.0][A.1] = 0;
+    while let Some((x, y)) = queue.pop_front(){
+
+        let count = board[x][y];
+        'naname1: for d in 1..N{
+            if x >= d && y>= d{
+                // eprintln!("1 -> {} {} {}", x, y , d);
+                if S[x-d][y-d] == b'#'{
+                    break 'naname1;
+                }
+                if board[x-d][y-d] == std::usize::MAX{
+                    board[x-d][y-d] = board[x-d][y-d].min(count+1);
+                    queue.push_back((x-d, y-d));    
+                }
+                if count >= board[x-d][y-d]{
+                    break
                 }
             }
-            println!("Yes");
-            return;
         }
-        if num[0] > 0{
-            continue 'target
-        }
-        for i in 1..10{
-            if num[i] > nums[i]{
-                continue 'target
+        'naname2: for d in 1..N{
+            if x >= d && y+d < N{
+                // eprintln!("2 -> {} {} {}", x, y , d);
+                if S[x-d][y+d] == b'#'{
+                    break 'naname2;
+                }
+                if board[x-d][y+d] == std::usize::MAX{
+                    board[x-d][y+d] = board[x-d][y+d].min(count+1);
+                    queue.push_back((x-d, y+d));    
+                }
+                if count >= board[x-d][y+d]{
+                    break
+                }
             }
         }
-        println!("Yes");
-        return;
+        'naname3: for d in 1..N{
+            // eprintln!("3 -> {} {} {}", x, y , d);
+            if x+d < N && y >= d{
+                if S[x+d][y-d] == b'#'{
+                    break 'naname3;
+                }
+                if board[x+d][y-d] == std::usize::MAX{
+                    board[x+d][y-d] = board[x+d][y-d].min(count+1);
+                    queue.push_back((x+d, y-d));    
+                }
+                if count >= board[x+d][y-d]{
+                    break
+                }
+            }
+        }
+        'naname4: for d in 1..N{
+            // eprintln!("4 -> {} {} {}", x, y , d);
+            if x+d < N && y + d < N{
+                if S[x+d][y+d] == b'#'{
+                    break 'naname4;
+                }
+                if board[x+d][y+d] == std::usize::MAX{
+                    board[x+d][y+d] = board[x+d][y+d].min(count+1);
+                    queue.push_back((x+d, y+d));    
+                }
+                if count >= board[x+d][y+d]{
+                    break
+                }
+            }
+        }
+        // eprintln!("{:?}", queue);
     }
-    println!("No");
+    // for i in 0..N{
+    //     eprintln!("{:?}", board[i]);
+    // }
+    if board[B.0][B.1] == std::usize::MAX{
+        println!("-1")
+    }else{
+        println!("{}", board[B.0][B.1]);
+    }
+
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
