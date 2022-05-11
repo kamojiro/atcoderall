@@ -15,15 +15,37 @@ macro_rules! debug_eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use proconio::marker::Bytes;
 use proconio::{fastout, input};
+use std::collections::HashSet;
 
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
-        //array: [(usize,usize);N],
+        N: usize,
+        S: Bytes,
+        X: Bytes,
     }
-    unimplemented!();
+    let mut dp = vec![HashSet::new(); N+1];
+    dp[N].insert(0);
+    for i in (0..N).rev(){
+        for r in 0..7{
+            if X[i] == b'T'{
+                if dp[i+1].contains(&(10*r%7)) || dp[i+1].contains(&((10*r + ((S[i] - b'0') as usize))%7)){
+                    dp[i].insert(r);
+                }
+            }else{
+                if dp[i+1].contains(&(10*r%7)) && dp[i+1].contains(&((10*r + ((S[i] - b'0') as usize))%7)){
+                    dp[i].insert(r);
+                }
+            }
+        }
+    }
+    if dp[0].contains(&0){
+        println!("Takahashi");
+    }else{
+        println!("Aoki");
+    }
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

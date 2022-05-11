@@ -20,10 +20,14 @@ use proconio::{fastout, input};
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
-        //array: [(usize,usize);N],
+        M: usize,
+        H: usize,
     }
-    unimplemented!();
+    if H%M == 0{
+        println!("Yes")
+    }else{
+        println!("No")
+    }
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

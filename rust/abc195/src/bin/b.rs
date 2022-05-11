@@ -20,10 +20,26 @@ use proconio::{fastout, input};
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
-        //array: [(usize,usize);N],
+        A: usize,
+        B: usize,
+        mut W: usize,
     }
-    unimplemented!();
+    W *= 1000;
+    let mut minn = 0;
+    let mut maxn = 0;
+    for i in 1..=W{
+        if i*A <= W && W <= i*B{
+            if minn == 0{
+                minn = i;
+            }
+            maxn = maxn.max(i)
+        }
+    }
+    if minn == 0{
+        println!("UNSATISFIABLE")
+    }else{
+        println!("{} {}", minn, maxn);
+    }
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src

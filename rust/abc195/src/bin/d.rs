@@ -15,15 +15,51 @@ macro_rules! debug_eprintln {
     ($p:tt, $($x:expr),*) => {};
 }
 
+use proconio::marker::Usize1;
 use proconio::{fastout, input};
 
 #[fastout]
 fn main() {
     input!{
-        //N: i64,
-        //array: [(usize,usize);N],
+        (N, M, Q): (usize, usize, usize),
+        mut WV: [(usize, usize); N],
+        X: [usize; M],
+        Queries: [(Usize1, Usize1); Q],
     }
-    unimplemented!();
+    WV.sort_by(|a,b| 
+        if a.1 == b.1{
+            a.0.cmp(&b.0)
+        }else{
+            b.1.cmp(&a.1)
+        }
+    );
+    for &(l, r) in &Queries{
+        let mut boxes = Vec::new();
+        for i in 0..M{
+            if l <= i && i <= r{
+                continue
+            }
+            boxes.push(X[i]);
+        }
+        boxes.sort();
+        if boxes.len() == 0{
+            println!("0");
+            continue
+        }
+        let mut ans = 0;
+        let mut unused = vec![true; boxes.len()];
+        for &(w, v) in &WV{
+            for i in 0..boxes.len(){
+                if w <= boxes[i] && unused[i]{
+                    ans += v;
+                    unused[i] = false;
+                    break
+                }
+            }
+        }
+        println!("{}", ans);
+    }
+
 }
 
 // https://github.com/rust-lang-ja/ac-library-rs/tree/master/src
