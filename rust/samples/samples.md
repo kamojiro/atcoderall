@@ -172,6 +172,7 @@ https://atcoder.jp/contests/typical90/submissions/23534946)
 
 - [abc150_c](https://atcoder.jp/contests/abc150/submissions/25139881)
 - [abc145_c](https://atcoder.jp/contests/abc145/submissions/25075865)
+- [abc198_d](https://atcoder.jp/contests/abc198/submissions/32305155)
 
 ## 強連結成分分解
 
